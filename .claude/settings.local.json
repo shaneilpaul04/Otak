@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s https://otak-a.netlify.app/)",
+      "Bash(curl -s https://otak-a.netlify.app/otak.js)",
+      "Bash(sed -i '' 's/let supabase = null/let sb = null/g' /Users/cuty7211/Documents/Otak/otak.js)",
+      "Bash(sed -i '' 's/window\\\\.supabase/WINDOW_SUPABASE_PLACEHOLDER/g' /Users/cuty7211/Documents/Otak/otak.js)",
+      "Bash(sed -i '' 's/\\\\bsupabase\\\\b/sb/g' /Users/cuty7211/Documents/Otak/otak.js)",
+      "Bash(sed -i '' s/WINDOW_SUPABASE_PLACEHOLDER/window.supabase/g /Users/cuty7211/Documents/Otak/otak.js)",
+      "Bash(python3)",
+      "Bash(grep -n \"selectedMode\\\\|submitAnswer\\\\|improveAnswer\\\\|toggleQuickPicks\\\\|renderQuickPicks\\\\|flag\\\\.question\\\\b\\\\|flag\\\\.quickPicks\\\\|qp-wrap\\\\|ans-\\\\${\" /Users/cuty7211/Documents/Otak/otak.js)"
+    ]
+  }
+}

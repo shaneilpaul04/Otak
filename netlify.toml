@@ -1,0 +1,7 @@
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+  timeout = 30
+
+[build.processing]
+  skip_processing = true
