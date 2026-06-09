@@ -92,8 +92,9 @@ export async function onRequest(context) {
 
   const apiKey = env.OPENROUTER_API_KEY
   if (!apiKey) {
+    const availableKeys = Object.keys(env || {})
     return new Response(
-      JSON.stringify({ error: 'API key not configured — set OPENROUTER_API_KEY in Cloudflare Pages environment variables' }),
+      JSON.stringify({ error: 'API key not configured', availableEnvKeys: availableKeys }),
       { status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } }
     )
   }

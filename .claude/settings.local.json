@@ -8,7 +8,11 @@
       "Bash(sed -i '' 's/\\\\bsupabase\\\\b/sb/g' /Users/cuty7211/Documents/Otak/otak.js)",
       "Bash(sed -i '' s/WINDOW_SUPABASE_PLACEHOLDER/window.supabase/g /Users/cuty7211/Documents/Otak/otak.js)",
       "Bash(python3)",
-      "Bash(grep -n \"selectedMode\\\\|submitAnswer\\\\|improveAnswer\\\\|toggleQuickPicks\\\\|renderQuickPicks\\\\|flag\\\\.question\\\\b\\\\|flag\\\\.quickPicks\\\\|qp-wrap\\\\|ans-\\\\${\" /Users/cuty7211/Documents/Otak/otak.js)"
+      "Bash(grep -n \"selectedMode\\\\|submitAnswer\\\\|improveAnswer\\\\|toggleQuickPicks\\\\|renderQuickPicks\\\\|flag\\\\.question\\\\b\\\\|flag\\\\.quickPicks\\\\|qp-wrap\\\\|ans-\\\\${\" /Users/cuty7211/Documents/Otak/otak.js)",
+      "Bash(git remote *)",
+      "Bash(git push *)",
+      "Bash(git commit *)",
+      "Bash(git add *)"
     ]
   }
 }
