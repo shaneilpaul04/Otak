@@ -479,6 +479,26 @@
     .streak-sub{font-size:13px;opacity:.75;margin-top:2px;font-style:italic}
     .improvement-banner{display:flex;align-items:center;gap:10px;background:var(--green-bg);border:1px solid var(--green-border);border-left:3px solid var(--green);border-radius:8px;padding:12px 16px;margin-top:14px;font-size:14px;color:var(--green);line-height:1.5}
     .improvement-icon{font-size:18px;font-weight:600;flex-shrink:0}
+
+    /* ── FINAL ESSAY STATS ────────────────────────────────────── */
+    .final-essay-header{display:flex;gap:10px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+    .final-stat{flex:1;text-align:center;background:var(--card-warm);border-radius:12px;padding:12px 8px}
+    .final-stat-value{display:block;font-family:'Nunito',sans-serif;font-weight:800;font-size:22px;color:var(--ink)}
+    .final-stat-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+    .copy-essay-btn{width:100%;margin-top:16px;padding:16px 24px;background:var(--amber);border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:700;color:#fff;cursor:pointer;transition:opacity .15s}
+    .copy-essay-btn:hover{opacity:.88}
+    .copy-essay-btn.copied{background:var(--green)}
+
+    /* ── STRUCTURED PUSHBACK ──────────────────────────────────── */
+    .pb-row{display:flex;flex-direction:column;gap:3px;margin-bottom:12px}
+    .pb-tag{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+    .pb-tag-amber{color:var(--amber)}
+    .pb-tag-green{color:var(--green)}
+    .pb-text{font-size:15px;line-height:1.55;color:var(--ink)}
+    .pb-text-soft{font-size:14px;line-height:1.5;color:var(--muted);font-style:italic}
+    .pb-shape{font-size:13px;color:var(--ink-soft);background:var(--card);border-radius:10px;padding:10px 14px;margin-bottom:12px;line-height:1.5}
+    .pb-shape em{color:var(--green);font-style:italic}
+    .pb-actions{margin-top:4px}
   </style>
 </head>
 <body>
@@ -515,13 +535,13 @@
 <!-- SETUP PANEL -->
 <div class="setup-panel" id="setupPanel">
   <div class="setup-header" onclick="toggleSetup()">
-    <div class="setup-title">🧠 your profile &amp; rubric</div>
+    <div class="setup-title">⚙ optional: add your uni + rubric for sharper coaching</div>
     <div style="display:flex;align-items:center;gap:8px">
-      <div class="setup-badge empty" id="setupBadge">not set up</div>
-      <div class="setup-chevron open" id="setupChevron">▼</div>
+      <div class="setup-badge empty" id="setupBadge"></div>
+      <div class="setup-chevron" id="setupChevron">▼</div>
     </div>
   </div>
-  <div class="setup-body" id="setupBody">
+  <div class="setup-body collapsed" id="setupBody">
 
     <div class="setup-row">
       <select class="setup-select" id="setupUni">
@@ -581,7 +601,12 @@
       <div class="memory-note" id="memoryNote"></div>
     </div>
 
-    <button class="setup-save-btn" onclick="saveProfile()">save profile →</button>
+    <div>
+      <label style="margin-bottom:8px">assignment question <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:11px">(optional but helps a lot)</span></label>
+      <input type="text" id="assignmentQ" placeholder="paste your assignment question here e.g. 'Discuss the impact of globalisation on Malaysia's economy'" style="width:100%;padding:12px 16px;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;font-family:'Nunito',sans-serif;font-size:14px;color:var(--ink);outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--amber)'" onblur="this.style.borderColor='var(--border)'"/>
+    </div>
+
+    <button class="setup-save-btn" onclick="saveProfile()">save →</button>
   </div>
 </div>
 
@@ -589,7 +614,7 @@
 <div class="form-section" id="formSection">
 
   <div>
-    <label>step 1 — how did you write this?</label>
+    <label>how did you write this?</label>
     <div class="wrote-toggle">
       <button class="wrote-btn active" data-wrote="ai" onclick="setWrote('ai')">I used AI 🤖</button>
       <button class="wrote-btn" data-wrote="self" onclick="setWrote('self')">I wrote it myself ✍️</button>
@@ -597,12 +622,6 @@
   </div>
 
   <div>
-    <label>step 2 — assignment question <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:11px">(optional but helps a lot)</span></label>
-    <input type="text" id="assignmentQ" placeholder="paste your assignment question here e.g. 'Discuss the impact of globalisation on Malaysia's economy'" style="width:100%;padding:12px 16px;background:var(--card);border:1.5px solid var(--border);border-radius:10px;font-family:'Nunito',sans-serif;font-size:14px;color:var(--ink);outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--amber)'" onblur="this.style.borderColor='var(--border)'"/>
-  </div>
-
-  <div>
-    <label>step 3 — paste your essay</label>
     <textarea id="essay" placeholder="paste your essay here. otak will pick the most important sections to fix — not overwhelm you with 50 things." oninput="onEssayInput()"></textarea>
     <div class="word-counter-row">
       <span class="word-count" id="wordCount">0 / 1,000 words</span>
@@ -612,7 +631,7 @@
   </div>
 
   <div>
-    <label>step 4 — language</label>
+    <label>language</label>
     <div class="lang-toggle">
       <button class="lang-btn active" data-lang="en" onclick="setLang('en')">English</button>
       <button class="lang-btn" data-lang="bm" onclick="setLang('bm')">Bahasa Malaysia</button>
@@ -653,11 +672,23 @@
     <button class="share-btn" id="shareBtn" onclick="shareScore()">share my score →</button>
   </div>
   <div class="full-essay-card" id="fullEssayCard">
-    <div class="full-essay-header">
-      <div class="full-essay-title">✏️ your updated essay</div>
-      <button class="copy-essay-btn" id="copyEssayBtn" onclick="copyFullEssay()">copy full essay</button>
+    <div class="full-essay-title">✏️ your updated essay</div>
+    <div class="final-essay-header">
+      <div class="final-stat">
+        <span class="final-stat-value" id="finalWordCount">—</span>
+        <span class="final-stat-label">words</span>
+      </div>
+      <div class="final-stat">
+        <span class="final-stat-value" id="finalDelta">—</span>
+        <span class="final-stat-label">vs original</span>
+      </div>
+      <div class="final-stat">
+        <span class="final-stat-value" id="finalSections">—</span>
+        <span class="final-stat-label">sections fixed</span>
+      </div>
     </div>
     <div class="full-essay-body" id="fullEssayBody"></div>
+    <button class="copy-essay-btn" id="copyEssayBtn" onclick="copyFullEssay()">copy full essay →</button>
   </div>
 </div>
 

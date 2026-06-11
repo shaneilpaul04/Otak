@@ -485,7 +485,7 @@
       badge.textContent = [profile.uni, profile.faculty].filter(Boolean).join(' · ')
       badge.className = 'setup-badge'
     } else {
-      badge.textContent = 'not set up'
+      badge.textContent = ''
       badge.className = 'setup-badge empty'
     }
   }
@@ -605,22 +605,32 @@
 
   // ── API ───────────────────────────────────────────────────────────────────
   async function callAPI(prompt, stage, wordCount) {
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, stage, wordCount })
-    })
-    if (res.status === 429) {
-      const e = await res.json().catch(()=>({}))
-      throw new Error(e?.error?.message || 'Rate limit hit lah. Come back later.')
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 60000)
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt, stage, wordCount }),
+        signal: controller.signal
+      })
+      clearTimeout(timeout)
+      if (res.status === 429) {
+        const e = await res.json().catch(()=>({}))
+        throw new Error(e?.error?.message || 'Rate limit hit lah. Come back later.')
+      }
+      if (res.status === 402) {
+        const e = await res.json().catch(()=>({}))
+        throw new Error(e?.message || e?.error?.message || 'Not enough OpenRouter credits — top up at openrouter.ai/settings/credits')
+      }
+      if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e?.error?.message || e?.message || `API error ${res.status}`) }
+      const data = await res.json()
+      return data?.choices?.[0]?.message?.content || ''
+    } catch(e) {
+      clearTimeout(timeout)
+      if (e.name === 'AbortError') throw new Error('took too long — try again')
+      throw e
     }
-    if (res.status === 402) {
-      const e = await res.json().catch(()=>({}))
-      throw new Error(e?.message || e?.error?.message || 'Not enough OpenRouter credits — top up at openrouter.ai/settings/credits')
-    }
-    if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e?.error?.message || e?.message || `API error ${res.status}`) }
-    const data = await res.json()
-    return data?.choices?.[0]?.message?.content || ''
   }
 
   function parseJSON(raw) {
@@ -696,15 +706,21 @@ ${essayBlock}`
 
     let stage1Output = null
     try {
-      const raw = await callAPI(stage1Prompt, 'context', wordCount)
+      let raw = await callAPI(stage1Prompt, 'context', wordCount)
       stage1Output = parseJSON(raw)
+      if (!stage1Output) {
+        // one retry
+        await new Promise(r => setTimeout(r, 2000))
+        raw = await callAPI(stage1Prompt, 'context', wordCount)
+        stage1Output = parseJSON(raw)
+      }
       if (!stage1Output) throw new Error('stage 1 parse failed')
     } catch(e) {
       setLoading(false)
       if (e.message.includes('limit') || e.message.includes('cap') || e.message.includes('Rate')) {
         showUpgradeModal(e.message)
       } else {
-        showError('eh something went wrong reading your essay lah — try again')
+        showError('otak\'s brain hiccuped 😵 your essay is safe — hit the button to try again.')
       }
       return
     }
@@ -881,13 +897,21 @@ ${essayBlock}`
       parsed = parseJSON(raw)
       if (!parsed) {
         // retry once on bad parse
+        await new Promise(r => setTimeout(r, 2000))
         const raw2 = await callAPI(stage4Prompt, 'coach')
         parsed = parseJSON(raw2)
       }
-    } catch(e) { setLoading(false); showError('eh something went wrong lah, try again — ' + (e.message||'unknown')); return }
+    } catch(e) {
+      setLoading(false)
+      showError("otak's brain hiccuped 😵 your essay is safe — hit the button to try again.")
+      return
+    }
 
     setLoading(false)
-    if (!parsed?.verdict || !Array.isArray(parsed.flags) || parsed.flags.length < 3) { showError('eh something went wrong lah, try again'); return }
+    if (!parsed?.verdict || !Array.isArray(parsed.flags) || parsed.flags.length < 3) {
+      showError("otak's brain hiccuped 😵 your essay is safe — hit the button to try again.")
+      return
+    }
 
     flagData = parsed.flags.slice(0,3)
     flagData.forEach(f => { if (f.weakness_tag) recordWeakness(f.weakness_tag) })
@@ -1025,7 +1049,8 @@ ${essayBlock}`
         <textarea
           class="elaboration-input"
           id="elaborate-input-${flag.id}"
-          oninput="checkElaborationWarmth(${flag.id})"
+          oninput="checkElaborationWarmth(${flag.id}); autoGrow(this)"
+          onkeydown="elabKeydown(event, ${flag.id})"
           placeholder="rough notes lah. one sentence — Otak reads the idea."></textarea>
         <div class="elaboration-actions">
           <button class="eval-btn" onclick="submitElaboration(${flag.id}, 'typed')">rewrite my section →</button>
@@ -1054,6 +1079,36 @@ ${essayBlock}`
         <button class="skip-btn" onclick="markSkipped(${flag.id})">skip this section</button>
       </div>
     `
+  }
+
+  // ── WORD BUDGET ENFORCEMENT ───────────────────────────────────────────────
+  async function enforceWordBudget(flag, result) {
+    const origCount = flag.original.trim().split(/\s+/).length
+    const maxWords = origCount + 5
+    let rewrite = result.rewritten || ''
+    let rewriteCount = rewrite.trim().split(/\s+/).length
+
+    if (rewriteCount <= maxWords) return result
+
+    for (let attempt = 0; attempt < 2 && rewriteCount > maxWords; attempt++) {
+      const compressPrompt = `Compress this sentence to ${maxWords} words or fewer. Keep the same meaning, same key details, same student voice. Do not add anything new. No em dashes, no semicolons, no filler.
+
+Sentence: "${rewrite}"
+
+Output ONLY the compressed sentence, no quotes, no explanation.`
+      try {
+        const compressed = await callAPI(compressPrompt, 'evaluate')
+        const cleaned = compressed.trim().replace(/^["']|["']$/g, '')
+        const cleanedCount = cleaned.split(/\s+/).length
+        if (cleanedCount < rewriteCount) {
+          rewrite = cleaned
+          rewriteCount = cleanedCount
+        }
+      } catch(e) { break }
+    }
+
+    result.rewritten = rewrite
+    return result
   }
 
   // ── LAYER C: CHOICE FLOW ─────────────────────────────────────────────────
@@ -1111,7 +1166,7 @@ ${essayBlock}`
 
   function selectLevel2(flagId, detailId) {
     document.querySelectorAll(`#level2-options-${flagId} .choice-btn`)
-      .forEach(b => b.classList.remove('selected'))
+      .forEach(b => { b.classList.remove('selected'); b.disabled = true })
     const btn = document.getElementById(`level2-${flagId}-${detailId}`)
     if (btn) btn.classList.add('selected')
 
@@ -1206,7 +1261,9 @@ ${essayBlock}`
         : (flag.choices || []).find(c => c.id === choiceState.level1)
     }
 
-    // Hide all cascade UI, show loading
+    // Disable submit to prevent double-fire, hide cascade UI, show loading
+    const typingSubmitBtn = document.querySelector(`#typing-${flagId} .eval-btn`)
+    if (typingSubmitBtn) typingSubmitBtn.disabled = true
     document.getElementById(`level1-${flagId}`).style.display = 'none'
     document.getElementById(`level2-${flagId}`).style.display = 'none'
     document.getElementById(`typing-${flagId}`).style.display = 'none'
@@ -1217,13 +1274,35 @@ ${essayBlock}`
     engagementMetrics.sectionsAttempted = (engagementMetrics.sectionsAttempted || 0) + 1
 
     try {
-      const result = await evaluateElaboration(flag, chosenChoice, answerText, chosenDetail)
+      let result = await evaluateElaboration(flag, chosenChoice, answerText, chosenDetail)
+      if (result.verdict === 'good') {
+        result = await enforceWordBudget(flag, result)
+      }
       document.getElementById(`evalload-${flagId}`).style.display = 'none'
       handleEvaluationResult(flagId, result, answerText)
     } catch(e) {
       document.getElementById(`evalload-${flagId}`).style.display = 'none'
       showError('eh something went wrong, try again — ' + (e.message || ''))
-      document.getElementById(`level1-${flagId}`).style.display = 'block'
+      // Re-enable submit button
+      const typingBtn = document.querySelector(`#typing-${flagId} .eval-btn`)
+      if (typingBtn) typingBtn.disabled = false
+      // Restore cascade state so student can re-tap without losing selections
+      const savedState = currentChoices[flagId]
+      if (savedState?.level2) {
+        // Restore level 2 view with the choice still selected
+        const choice = (flag.choices || []).find(c => c.id === savedState.level1)
+        if (choice?.follow_up) {
+          document.getElementById(`level2-${flagId}`).style.display = 'block'
+          const btn = document.getElementById(`level2-${flagId}-${savedState.level2}`)
+          if (btn) btn.classList.add('selected')
+        } else {
+          document.getElementById(`level1-${flagId}`).style.display = 'block'
+        }
+      } else if (savedState?.level1 === 'other' || source === 'typed') {
+        document.getElementById(`typing-${flagId}`).style.display = 'block'
+      } else {
+        document.getElementById(`level1-${flagId}`).style.display = 'block'
+      }
     }
   }
 
@@ -1262,13 +1341,18 @@ For cascade completions OR typed answers with genuine substance:
 For typed answers that are thin or lazy (not applicable to cascade):
 {
   "verdict": "pushback",
-  "feedback": "30-50 words. Quote what they said. Suggest ONE specific addition."
+  "what_you_said": "5-10 word neutral summary of their answer",
+  "why_not_strong": "ONE sentence 15-25 words explaining the PRINCIPLE of why this kind of answer is weak. Teach the pattern, not just this case. Example register: 'You described what happened but not what changed because of it — description is not argument.' or 'You named the idea but gave no example, so a marker cannot tell if you understand it or memorised it.'",
+  "what_would_fix_it": "ONE specific addition 10-20 words building from what they already said",
+  "strong_answer_shape": "the SHAPE of a strong answer without giving content, 8-15 words. Example: 'a specific event + what changed because of it'. NEVER write the actual answer for them."
 }
 
 For typed answers that are off-topic (not applicable to cascade):
 {
   "verdict": "off_topic",
-  "feedback": "25-40 words. Specific about what they wrote vs what was asked."
+  "what_you_said": "5-10 word neutral summary",
+  "why_not_strong": "one sentence explaining the mismatch: 'your answer is about X but this section of your essay argues Y'",
+  "what_would_fix_it": "redirect: 'pick again, or tell me what your essay was actually trying to say here'"
 }
 
 For typed answers revealing the student doesn't know the topic (not applicable to cascade):
@@ -1338,9 +1422,9 @@ OUTPUT STRICT JSON ONLY (no markdown, no preamble).`
       revealNextFlag()
     } else if (result.verdict === 'pushback') {
       engagementMetrics.pushbacksReceived++
-      showPushback(flagId, result.feedback, 'pushback', originalAnswer)
+      showPushback(flagId, result, 'pushback', originalAnswer)
     } else if (result.verdict === 'off_topic') {
-      showPushback(flagId, result.feedback, 'off_topic', originalAnswer)
+      showPushback(flagId, result, 'off_topic', originalAnswer)
     } else if (result.verdict === 'teach_more') {
       showTeachMore(flagId, result)
     }
@@ -1373,18 +1457,45 @@ OUTPUT STRICT JSON ONLY (no markdown, no preamble).`
     }
   }
 
-  function showPushback(flagId, feedback, type, previousAnswer) {
+  function showPushback(flagId, result, type, previousAnswer) {
     const box = document.getElementById(`push-${flagId}`)
     box.className = `pushback-box ${type}`
     box.style.display = 'flex'
-    document.getElementById(`pushtext-${flagId}`).textContent = feedback
+    box.style.flexDirection = 'column'
 
-    const action = document.getElementById(`pushaction-${flagId}`)
-    action.innerHTML = `
-      <button class="eval-btn" onclick="continueElaboration(${flagId}, ${JSON.stringify(previousAnswer).replace(/</g,'\\u003c')})">
+    const whatYouSaid   = result.what_you_said   || ''
+    const whyNotStrong  = result.why_not_strong  || result.feedback || ''
+    const whatWouldFix  = result.what_would_fix_it || ''
+    const shape         = result.strong_answer_shape || ''
+
+    box.innerHTML = `
+      <div class="pushback-label">${type === 'off_topic' ? 'hmm, different topic' : 'almost — here\'s the gap'}</div>
+      ${whatYouSaid ? `
+        <div class="pb-row">
+          <span class="pb-tag">you said</span>
+          <span class="pb-text-soft">${esc(whatYouSaid)}</span>
+        </div>` : ''}
+      <div class="pb-row pb-why">
+        <span class="pb-tag pb-tag-amber">why it's not there yet</span>
+        <span class="pb-text">${esc(whyNotStrong)}</span>
+      </div>
+      ${whatWouldFix ? `
+        <div class="pb-row">
+          <span class="pb-tag pb-tag-green">what would fix it</span>
+          <span class="pb-text">${esc(whatWouldFix)}</span>
+        </div>` : ''}
+      ${shape ? `
+        <div class="pb-shape">strong answers here look like: <em>${esc(shape)}</em></div>` : ''}
+      <div id="pushaction-${flagId}" class="pb-actions"></div>
+    `
+
+    document.getElementById(`pushaction-${flagId}`).innerHTML = `
+      <button class="eval-btn" onclick='continueElaboration(${flagId}, ${JSON.stringify(previousAnswer).replace(/</g,'\\u003c')})'>
         add to my answer →
       </button>
     `
+
+    setTimeout(() => box.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100)
   }
 
   function continueElaboration(flagId, previousAnswer) {
@@ -1412,6 +1523,18 @@ OUTPUT STRICT JSON ONLY (no markdown, no preamble).`
         <button class="eval-btn" onclick="retryAfterTeach(${flagId})">okay, let me try again →</button>
       </div>
     `
+  }
+
+  function elabKeydown(e, flagId) {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault()
+      submitElaboration(flagId, 'typed')
+    }
+  }
+
+  function autoGrow(el) {
+    el.style.height = 'auto'
+    el.style.height = Math.min(el.scrollHeight, 320) + 'px'
   }
 
   let warmthDebounce = null
@@ -1687,9 +1810,16 @@ OUTPUT STRICT JSON ONLY (no markdown, no preamble).`
       if (verdict) verdict.parentNode.insertBefore(badge, verdict.nextSibling)
     }
     const sign = totalWordDelta > 0 ? '+' : ''
-    const cls = totalWordDelta > 10 ? 'over' : totalWordDelta > 0 ? 'warn' : 'good'
-    badge.className = `word-delta-badge ${cls}`
-    badge.innerHTML = `essay length: <strong>${sign}${totalWordDelta} words</strong> after Otak`
+    if (totalWordDelta <= 0) {
+      badge.className = 'word-delta-badge good'
+      badge.innerHTML = `essay length: <strong>${sign}${totalWordDelta} words</strong> — under budget ✓`
+    } else if (totalWordDelta <= 10) {
+      badge.className = 'word-delta-badge warn'
+      badge.innerHTML = `essay length: <strong>+${totalWordDelta} words</strong>`
+    } else {
+      badge.className = 'word-delta-badge over'
+      badge.innerHTML = `essay length: <strong>+${totalWordDelta} words</strong> — getting long lah`
+    }
   }
 
   function showPatternAlert(hits) {
@@ -1740,6 +1870,17 @@ OUTPUT STRICT JSON ONLY (no markdown, no preamble).`
   function buildFullEssay() {
     if (!Object.keys(rewrittenMap).length) return
     let updated = originalEssay
+    // Populate final essay stats header
+    const essayWords = updated.trim().split(/\s+/).length
+    const deltaEl = document.getElementById('finalDelta')
+    const wordsEl = document.getElementById('finalWordCount')
+    const sectionsEl = document.getElementById('finalSections')
+    if (wordsEl) wordsEl.textContent = essayWords.toLocaleString()
+    if (deltaEl) {
+      const d = totalWordDelta
+      deltaEl.textContent = d === 0 ? '±0' : (d > 0 ? `+${d}` : `${d}`)
+    }
+    if (sectionsEl) sectionsEl.textContent = `${engagementMetrics.sectionsCompleted}/3`
     Object.entries(rewrittenMap).forEach(([id, rewrite]) => {
       const flag = flagData.find(f => f.id === parseInt(id))
       if (flag && updated.includes(flag.original)) {
@@ -1900,11 +2041,11 @@ OUTPUT STRICT JSON ONLY (no markdown, no preamble).`
   // ── INIT ──────────────────────────────────────────────────────────────────
   // Load localStorage profile immediately for anonymous users
   loadProfile()
-  if (profile.uni || profile.faculty) {
-    setupOpen = false
-    document.getElementById('setupBody').classList.add('collapsed')
-    document.getElementById('setupChevron').classList.remove('open')
-  }
+  // Always start collapsed — setup is optional, paste box is the hero
+  setupOpen = false
+  document.getElementById('setupBody').classList.add('collapsed')
+  // Pre-select AI toggle visually (default is already set in state)
+  setWrote('ai')
 
   // Init Supabase — script is at bottom of <body> so DOM is already ready,
   // no DOMContentLoaded wrapper needed (the event has already fired by now).
