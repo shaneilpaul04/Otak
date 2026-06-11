@@ -1996,7 +1996,7 @@ OUTPUT STRICT JSON ONLY (no markdown, no preamble).`
 
       ctaEl.style.display = 'flex'
       ctaTextEl.textContent = 'view identity →'
-      ctaEl.onclick = () => window.location.href = '/me'
+      ctaEl.onclick = () => { window.location.href = '/me' }
     } catch(e) {
       console.error('stats bar refresh failed', e)
     }
