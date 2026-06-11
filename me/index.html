@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your writing identity · Otak</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg: #F4EFE3;
+      --card: #FAF5EA;
+      --card-warm: #F8F1E0;
+      --ink: #2A2520;
+      --ink-soft: #4A4239;
+      --muted: #8B7E70;
+      --border: #DDD0BD;
+      --amber: #B85C3E;
+      --amber-soft: #E8C8B5;
+      --green: #4A6B5A;
+      --green-bg: #E2EBE3;
+      --danger: #A04030;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Nunito', sans-serif;
+      font-size: 17px;
+      line-height: 1.65;
+      min-height: 100vh;
+      padding: 4px 20px 100px;
+    }
+    body::before {
+      content: "";
+      display: block;
+      height: 4px;
+      background: var(--amber);
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+    }
+    .container { max-width: 720px; margin: 0 auto; }
+    header {
+      padding: 48px 0 36px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 36px;
+    }
+    .nav-back {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      margin-bottom: 16px;
+    }
+    .nav-back:hover { color: var(--ink); }
+    .page-title {
+      font-family: 'Nunito', sans-serif;
+      font-size: 48px;
+      font-weight: 900;
+      line-height: 1.05;
+      color: var(--ink);
+      margin-bottom: 8px;
+      letter-spacing: -2px;
+    }
+    .page-subtitle { color: var(--muted); font-size: 15px; }
+
+    .section { margin-bottom: 56px; }
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .section-content {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 14px;
+    }
+    .stat-card {
+      background: var(--card-warm);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+    }
+    .stat-value {
+      font-family: 'Nunito', sans-serif;
+      font-size: 40px;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--ink);
+      margin-bottom: 4px;
+      letter-spacing: -1px;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 0.05em;
+    }
+
+    .pattern-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px dashed var(--border);
+    }
+    .pattern-item:last-child { border-bottom: none; }
+    .pattern-count {
+      font-family: 'Nunito', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--amber);
+      line-height: 1;
+      min-width: 50px;
+    }
+    .pattern-tag { flex: 1; font-size: 16px; color: var(--ink); }
+    .pattern-meta {
+      font-size: 12px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+    }
+
+    .essay-item {
+      display: flex;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      align-items: flex-start;
+    }
+    .essay-item:last-child { border-bottom: none; }
+    .essay-score-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--card-warm);
+      border: 2px solid var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 17px;
+      color: var(--green);
+      flex-shrink: 0;
+    }
+    .essay-score-circle.low { border-color: var(--amber); color: var(--amber); }
+    .essay-info { flex: 1; min-width: 0; }
+    .essay-preview {
+      font-family: 'Nunito', sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--ink);
+      font-style: italic;
+      line-height: 1.4;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      margin-bottom: 4px;
+    }
+    .essay-meta {
+      font-size: 12px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 36px 16px;
+      color: var(--muted);
+      font-style: italic;
+      font-weight: 500;
+      font-family: 'Nunito', sans-serif;
+    }
+
+    .signed-out { text-align: center; padding: 80px 20px; }
+    .signed-out h2 {
+      font-family: 'Nunito', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+    .signed-out p { color: var(--muted); margin-bottom: 24px; }
+    .signed-out a {
+      display: inline-block;
+      background: var(--amber);
+      color: white;
+      padding: 14px 24px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 80px;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    @media (max-width: 640px) {
+      body { font-size: 16px; padding: 4px 16px 80px; }
+      .page-title { font-size: 36px; letter-spacing: -1.5px; }
+      .stat-value { font-size: 32px; letter-spacing: -0.5px; }
+      header { padding: 32px 0 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="/" class="nav-back">← back to Otak</a>
+      <div class="page-title">your writing identity</div>
+      <div class="page-subtitle">how Otak sees you, across every essay</div>
+    </header>
+
+    <div id="loading" class="loading">loading...</div>
+
+    <div id="signedOut" class="signed-out" style="display:none;">
+      <h2>sign in to see your writing identity</h2>
+      <p>Otak tracks your patterns across essays — but only if you sign in.</p>
+      <a href="/">go back to Otak</a>
+    </div>
+
+    <div id="identity" style="display:none;">
+
+      <div class="section">
+        <div class="section-label">the numbers</div>
+        <div class="stat-grid" id="statsGrid"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">patterns Otak noticed</div>
+        <div class="section-content" id="patternsContent">
+          <div class="empty-state">not enough data yet — come back after 2 more essays</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">recent essays</div>
+        <div class="section-content" id="essaysContent">
+          <div class="empty-state">your essays will show up here</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let sb = null
+    let currentUser = null
+
+    async function init() {
+      try {
+        const res = await fetch('/api/config')
+        const cfg = await res.json()
+        sb = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey)
+
+        const { data: { session } } = await sb.auth.getSession()
+        if (session?.user) {
+          currentUser = session.user
+          await loadIdentity()
+        } else {
+          document.getElementById('loading').style.display = 'none'
+          document.getElementById('signedOut').style.display = 'block'
+        }
+      } catch(e) {
+        console.error(e)
+        document.getElementById('loading').textContent = 'something went wrong'
+      }
+    }
+
+    async function loadIdentity() {
+      const [{ data: profile }, { data: weaknesses }, { data: essays }] = await Promise.all([
+        sb.from('profiles').select('*').eq('id', currentUser.id).single(),
+        sb.from('weakness_patterns').select('*').eq('user_id', currentUser.id).order('count', { ascending: false }).limit(8),
+        sb.from('essays').select('id, original_text, authenticity_score, word_count, completed_at, state').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(10)
+      ])
+
+      renderStats(profile, essays || [])
+      renderPatterns(weaknesses || [])
+      renderEssays(essays || [])
+
+      document.getElementById('loading').style.display = 'none'
+      document.getElementById('identity').style.display = 'block'
+    }
+
+    function renderStats(profile, essays) {
+      const grid = document.getElementById('statsGrid')
+      const completed = essays.filter(e => e.state === 'completed')
+      const totalEssays = profile?.total_essays || completed.length
+      const avgScore = completed.length
+        ? Math.round(completed.reduce((a, e) => a + (e.authenticity_score || 0), 0) / completed.length)
+        : 0
+      const streak = profile?.streak_essays || 0
+      const totalWords = completed.reduce((a, e) => a + (e.word_count || 0), 0)
+
+      grid.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-value">${totalEssays}</div>
+          <div class="stat-label">essays</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${streak}</div>
+          <div class="stat-label">streak</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${avgScore || '—'}</div>
+          <div class="stat-label">avg score</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${totalWords.toLocaleString()}</div>
+          <div class="stat-label">words coached</div>
+        </div>
+      `
+    }
+
+    function renderPatterns(weaknesses) {
+      const recurring = weaknesses.filter(w => w.count >= 2)
+      const container = document.getElementById('patternsContent')
+      if (recurring.length === 0) {
+        container.innerHTML = `<div class="empty-state">not enough data yet — come back after 2 more essays</div>`
+        return
+      }
+      container.innerHTML = recurring.map(w => `
+        <div class="pattern-item">
+          <div class="pattern-count">×${w.count}</div>
+          <div class="pattern-tag">${esc(w.tag)}</div>
+          <div class="pattern-meta">${relativeTime(w.last_seen)}</div>
+        </div>
+      `).join('')
+    }
+
+    function renderEssays(essays) {
+      const completed = essays.filter(e => e.state === 'completed')
+      const container = document.getElementById('essaysContent')
+      if (completed.length === 0) {
+        container.innerHTML = `<div class="empty-state">your essays will show up here</div>`
+        return
+      }
+      container.innerHTML = completed.map(e => {
+        const score = e.authenticity_score || 0
+        const scoreClass = score >= 60 ? '' : 'low'
+        const preview = (e.original_text || '').slice(0, 140)
+        return `
+          <div class="essay-item">
+            <div class="essay-score-circle ${scoreClass}">${score || '—'}</div>
+            <div class="essay-info">
+              <div class="essay-preview">"${esc(preview)}..."</div>
+              <div class="essay-meta">${e.word_count || 0} words · ${relativeTime(e.completed_at)}</div>
+            </div>
+          </div>
+        `
+      }).join('')
+    }
+
+    function esc(str) {
+      return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+    }
+
+    function relativeTime(ts) {
+      if (!ts) return ''
+      const days = Math.floor((Date.now() - new Date(ts).getTime()) / 86400000)
+      if (days < 1) return 'today'
+      if (days === 1) return 'yesterday'
+      if (days < 7) return `${days} days ago`
+      if (days < 30) return `${Math.floor(days / 7)}w ago`
+      return `${Math.floor(days / 30)}mo ago`
+    }
+
+    document.addEventListener('DOMContentLoaded', init)
+  </script>
+</body>
+</html>
