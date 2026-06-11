@@ -262,16 +262,16 @@
   </div>
 
   <script>
-    let supabase = null
+    let sb = null
     let currentUser = null
 
     async function init() {
       try {
         const res = await fetch('/api/config')
         const cfg = await res.json()
-        supabase = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey)
+        sb = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey)
 
-        const { data: { session } } = await supabase.auth.getSession()
+        const { data: { session } } = await sb.auth.getSession()
         if (session?.user) {
           currentUser = session.user
           await loadIdentity()
@@ -287,9 +287,9 @@
 
     async function loadIdentity() {
       const [{ data: profile }, { data: weaknesses }, { data: essays }] = await Promise.all([
-        supabase.from('profiles').select('*').eq('id', currentUser.id).single(),
-        supabase.from('weakness_patterns').select('*').eq('user_id', currentUser.id).order('count', { ascending: false }).limit(8),
-        supabase.from('essays').select('id, original_text, authenticity_score, word_count, completed_at, state').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(10)
+        sb.from('profiles').select('*').eq('id', currentUser.id).single(),
+        sb.from('weakness_patterns').select('*').eq('user_id', currentUser.id).order('count', { ascending: false }).limit(8),
+        sb.from('essays').select('id, original_text, authenticity_score, word_count, completed_at, state').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(10)
       ])
 
       renderStats(profile, essays || [])
