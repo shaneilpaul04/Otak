@@ -57,8 +57,8 @@ function recordEssay(key, wordCount) {
 
 const MODEL_FOR_STAGE = {
   context:  'anthropic/claude-haiku-4-5',
-  rubric:   'anthropic/claude-sonnet-4-6',
-  voice:    'anthropic/claude-sonnet-4-6',
+  rubric:   'anthropic/claude-haiku-4-5',
+  voice:    'anthropic/claude-haiku-4-5',
   coach:    'anthropic/claude-sonnet-4-6',
   evaluate: 'anthropic/claude-sonnet-4-6',
 }
