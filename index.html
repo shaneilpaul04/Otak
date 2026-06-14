@@ -4,22 +4,25 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Otak — your essay. your words. actually.</title>
-  <meta name="description" content="Otak is an AI writing coach that makes your AI-assisted essays sound genuinely like you. For Malaysian university students."/>
+  <meta name="description" content="Otak coaches you through your AI-assisted essay section by section until it genuinely sounds like you wrote it. For Malaysian university students."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --bg: #F4EFE3;
-      --card: #FAF5EA;
-      --card-warm: #F8F1E0;
-      --ink: #2A2520;
-      --ink-soft: #4A4239;
-      --muted: #8B7E70;
-      --border: #DDD0BD;
-      --amber: #B85C3E;
-      --green: #4A6B5A;
-      --green-bg: #E2EBE3;
-      --green-border: #B5C9BC;
+      --bg:         #F4EFE3;
+      --card:       #FAF5EA;
+      --card-warm:  #F8F1E0;
+      --ink:        #2A2520;
+      --ink-soft:   #4A4239;
+      --muted:      #8B7E70;
+      --border:     #DDD0BD;
+      --amber:      #B85C3E;
+      --amber-soft: #E8C8B5;
+      --amber-bg:   #F5E5DB;
+      --green:      #4A6B5A;
+      --green-bg:   #E2EBE3;
+      --green-border:#B5C9BC;
+      --danger:     #A04030;
     }
     *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -30,34 +33,48 @@
       font-size: 17px;
       line-height: 1.65;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
+
+    /* ── TOP ACCENT BAR ── */
     body::before {
       content: "";
       display: block;
       height: 4px;
-      background: var(--amber);
+      background: linear-gradient(90deg, var(--amber), #D4784A, var(--amber));
       position: fixed;
       top: 0; left: 0; right: 0;
-      z-index: 100;
+      z-index: 200;
     }
-    .container { max-width: 720px; margin: 0 auto; padding: 0 20px; }
+
+    .container { max-width: 740px; margin: 0 auto; padding: 0 20px; }
 
     /* ── NAV ── */
     nav {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 28px 0 20px;
+      padding: 28px 0 0;
+      position: relative;
+      z-index: 10;
     }
     .nav-logo {
-      font-family: 'Nunito', sans-serif;
       font-weight: 900;
-      font-size: 28px;
+      font-size: 26px;
       letter-spacing: -1px;
       color: var(--ink);
       text-decoration: none;
+      line-height: 1;
     }
-    .nav-logo span { color: var(--amber); font-style: italic; }
+    .nav-logo em { color: var(--amber); font-style: italic; }
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .nav-link {
+      font-size: 14px;
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .nav-link:hover { color: var(--ink); }
     .nav-cta {
       background: var(--ink);
       color: var(--bg);
@@ -67,48 +84,79 @@
       font-size: 14px;
       font-weight: 700;
       transition: background 0.15s;
+      white-space: nowrap;
     }
     .nav-cta:hover { background: var(--amber); }
 
     /* ── HERO ── */
     .hero {
-      padding: 64px 0 56px;
+      padding: 56px 0 0;
       text-align: center;
+      position: relative;
     }
-    .hero-badge {
-      display: inline-block;
-      background: var(--green-bg);
-      border: 1px solid var(--green-border);
-      color: var(--green);
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--amber-bg);
+      border: 1px solid var(--amber-soft);
+      color: var(--amber);
       font-family: 'DM Mono', monospace;
       font-size: 11px;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      padding: 5px 14px;
+      padding: 6px 16px;
       border-radius: 99px;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
+    }
+    .hero-eyebrow::before {
+      content: "";
+      width: 6px; height: 6px;
+      background: var(--amber);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
     }
     .hero-title {
-      font-size: 52px;
+      font-size: clamp(38px, 8vw, 64px);
       font-weight: 900;
-      line-height: 1.05;
-      letter-spacing: -2px;
+      line-height: 1.0;
+      letter-spacing: -2.5px;
       color: var(--ink);
-      margin-bottom: 20px;
+      margin-bottom: 22px;
     }
     .hero-title em {
       color: var(--amber);
       font-style: italic;
     }
-    .hero-sub {
-      font-size: 19px;
-      color: var(--ink-soft);
-      max-width: 50ch;
-      margin: 0 auto 36px;
-      line-height: 1.55;
+    .hero-title .line-muted {
+      color: var(--muted);
+      font-style: italic;
+      font-size: 0.75em;
     }
-    .hero-cta {
-      display: inline-block;
+    .hero-sub {
+      font-size: 18px;
+      color: var(--ink-soft);
+      max-width: 48ch;
+      margin: 0 auto 36px;
+      line-height: 1.6;
+      font-weight: 500;
+    }
+    .hero-sub strong { color: var(--ink); font-weight: 800; }
+    .hero-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       background: var(--amber);
       color: #fff;
       text-decoration: none;
@@ -116,52 +164,247 @@
       border-radius: 14px;
       font-size: 18px;
       font-weight: 800;
-      transition: opacity 0.15s;
+      transition: opacity 0.15s, transform 0.15s;
       letter-spacing: -0.01em;
+      box-shadow: 0 8px 24px rgba(184,92,62,0.28);
     }
-    .hero-cta:hover { opacity: 0.88; }
-    .hero-note {
-      margin-top: 14px;
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+    .hero-trust {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+    .hero-trust span { color: var(--green); font-weight: 500; }
+
+    /* ── UNI TICKER ── */
+    .uni-ticker {
+      margin: 36px 0 0;
+      overflow: hidden;
+      position: relative;
+      padding: 12px 0;
+    }
+    .uni-ticker::before,
+    .uni-ticker::after {
+      content: "";
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 60px;
+      z-index: 2;
+    }
+    .uni-ticker::before { left: 0; background: linear-gradient(90deg, var(--bg), transparent); }
+    .uni-ticker::after  { right: 0; background: linear-gradient(-90deg, var(--bg), transparent); }
+    .ticker-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .ticker-track {
+      display: flex;
+      gap: 32px;
+      animation: ticker 20s linear infinite;
+      width: max-content;
+    }
+    .ticker-track:hover { animation-play-state: paused; }
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+    .ticker-item {
       font-family: 'DM Mono', monospace;
       font-size: 12px;
       color: var(--muted);
+      white-space: nowrap;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── SECTION WRAPPER ── */
+    .section {
+      padding: 72px 0 0;
+    }
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 14px;
+    }
+    .section-headline {
+      font-size: clamp(26px, 5vw, 38px);
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      color: var(--ink);
+      line-height: 1.1;
+      margin-bottom: 14px;
+    }
+    .section-sub {
+      font-size: 16px;
+      color: var(--ink-soft);
+      max-width: 52ch;
+      line-height: 1.6;
+      margin-bottom: 36px;
+    }
+
+    /* ── PAIN SECTION ── */
+    .pain-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 0;
+    }
+    .pain-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .pain-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--amber);
+      opacity: 0.3;
+    }
+    .pain-icon {
+      width: 36px; height: 36px;
+      background: var(--amber-bg);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 12px;
+      font-size: 18px;
+    }
+    .pain-title {
+      font-weight: 800;
+      font-size: 15px;
+      color: var(--ink);
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+    .pain-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── BEFORE/AFTER ── */
+    .transform-demo {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      margin-top: 36px;
+    }
+    .transform-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid var(--border);
+    }
+    .transform-col {
+      padding: 16px 20px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .transform-col.before-col {
+      color: var(--danger);
+      border-right: 1px solid var(--border);
+      background: #FDF2F0;
+    }
+    .transform-col.after-col {
+      color: var(--green);
+      background: var(--green-bg);
+    }
+    .transform-col.before-col::before { content: "✕  "; }
+    .transform-col.after-col::before  { content: "✓  "; }
+    .transform-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .transform-text {
+      padding: 22px 20px;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+    .transform-text.before-text {
+      color: var(--muted);
+      font-style: italic;
+      border-right: 1px solid var(--border);
+      background: #FDF7F6;
+    }
+    .transform-text.after-text {
+      color: var(--ink);
+      background: var(--green-bg);
+      font-weight: 600;
+    }
+    .transform-tag {
+      display: flex;
+      gap: 8px;
+      padding: 12px 20px;
+      background: var(--green-bg);
+      border-top: 1px solid var(--green-border);
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--green);
     }
 
     /* ── HOW IT WORKS ── */
-    .section-title {
-      font-size: 13px;
-      font-family: 'DM Mono', monospace;
-      color: var(--muted);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      margin-bottom: 32px;
-      text-align: center;
-    }
     .steps {
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      margin-bottom: 64px;
+      gap: 0;
+      position: relative;
+    }
+    .steps::before {
+      content: "";
+      position: absolute;
+      left: 19px;
+      top: 40px;
+      bottom: 40px;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--amber), var(--green));
+      opacity: 0.25;
     }
     .step {
       display: flex;
       gap: 20px;
-      align-items: flex-start;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 22px 24px;
+      padding: 24px 0;
+      position: relative;
     }
-    .step-num {
+    .step-dot {
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-family: 'Nunito', sans-serif;
       font-weight: 900;
-      font-size: 32px;
+      font-size: 16px;
       color: var(--amber);
-      line-height: 1;
-      flex-shrink: 0;
-      width: 36px;
+      position: relative;
+      z-index: 1;
+      transition: all 0.2s;
     }
-    .step-body {}
+    .step:hover .step-dot {
+      background: var(--amber);
+      border-color: var(--amber);
+      color: #fff;
+    }
+    .step-content { padding-top: 8px; }
     .step-title {
       font-weight: 800;
       font-size: 17px;
@@ -170,189 +413,502 @@
     }
     .step-desc {
       font-size: 15px;
+      color: var(--ink-soft);
+      line-height: 1.55;
+      max-width: 52ch;
+    }
+    .step-desc strong { color: var(--ink); font-weight: 700; }
+
+    /* ── FEATURE GRID ── */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px 20px;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+    .feature-card:hover {
+      border-color: var(--amber-soft);
+      transform: translateY(-2px);
+    }
+    .feature-icon {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 14px;
+      font-size: 20px;
+    }
+    .feature-icon.amber { background: var(--amber-bg); }
+    .feature-icon.green { background: var(--green-bg); }
+    .feature-title {
+      font-weight: 800;
+      font-size: 15px;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .feature-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    /* ── SCORE PREVIEW ── */
+    .score-preview {
+      background: var(--ink);
+      border-radius: 20px;
+      padding: 32px 28px;
+      color: var(--bg);
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      margin-top: 36px;
+    }
+    .score-big {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 900;
+      font-size: 72px;
+      line-height: 1;
+      letter-spacing: -3px;
+      color: var(--amber);
+      flex-shrink: 0;
+    }
+    .score-big span { font-size: 28px; color: var(--muted); }
+    .score-right { flex: 1; }
+    .score-title {
+      font-weight: 800;
+      font-size: 19px;
+      color: var(--bg);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+    .score-sub {
+      font-size: 14px;
       color: var(--muted);
       line-height: 1.5;
     }
-
-    /* ── PROOF ── */
-    .proof {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 32px 28px;
-      margin-bottom: 64px;
+    .score-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
     }
-    .proof-label {
+    .score-chip {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 99px;
+      padding: 4px 12px;
       font-family: 'DM Mono', monospace;
-      font-size: 10px;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+    .score-chip.lit { background: rgba(184,92,62,0.2); border-color: rgba(184,92,62,0.3); color: var(--amber); }
+
+    /* ── QUOTE ── */
+    .quote-block {
+      background: var(--card-warm);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--amber);
+      border-radius: 16px;
+      padding: 28px 26px;
+      margin-top: 36px;
+    }
+    .quote-text {
+      font-size: 18px;
+      font-weight: 700;
+      font-style: italic;
+      color: var(--ink);
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+    .quote-attr {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* ── FINAL CTA ── */
+    .final-section {
+      padding: 80px 0 100px;
+      text-align: center;
+      border-top: 1px solid var(--border);
+      margin-top: 72px;
+    }
+    .final-pre {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
       color: var(--muted);
       text-transform: uppercase;
       letter-spacing: 0.1em;
       margin-bottom: 16px;
     }
-    .proof-original {
-      font-style: italic;
-      font-size: 15px;
-      color: var(--muted);
-      border-left: 3px solid var(--border);
-      padding: 12px 16px;
-      border-radius: 4px;
-      background: var(--bg);
-      margin-bottom: 12px;
-      line-height: 1.6;
-    }
-    .proof-arrow {
-      text-align: center;
-      color: var(--amber);
-      font-size: 20px;
-      margin: 8px 0;
-    }
-    .proof-rewrite {
-      font-size: 15px;
-      color: var(--ink);
-      border-left: 3px solid var(--green);
-      padding: 12px 16px;
-      border-radius: 4px;
-      background: var(--green-bg);
-      line-height: 1.6;
-    }
-    .proof-meta {
-      margin-top: 14px;
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      color: var(--green);
-    }
-
-    /* ── WHO IT'S FOR ── */
-    .for-cards {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 64px;
-    }
-    .for-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 20px;
-    }
-    .for-icon { font-size: 24px; margin-bottom: 8px; }
-    .for-title { font-weight: 800; font-size: 15px; color: var(--ink); margin-bottom: 4px; }
-    .for-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
-
-    /* ── FINAL CTA ── */
-    .final-cta {
-      text-align: center;
-      padding: 56px 0 80px;
-      border-top: 1px solid var(--border);
-    }
-    .final-cta-title {
-      font-size: 36px;
+    .final-title {
+      font-size: clamp(32px, 6vw, 52px);
       font-weight: 900;
-      letter-spacing: -1.5px;
+      letter-spacing: -2px;
       color: var(--ink);
-      margin-bottom: 12px;
+      line-height: 1.05;
+      margin-bottom: 16px;
     }
-    .final-cta-sub {
+    .final-title em { color: var(--amber); font-style: italic; }
+    .final-sub {
       color: var(--muted);
       font-size: 16px;
-      margin-bottom: 28px;
+      margin-bottom: 32px;
+      max-width: 42ch;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .final-trust {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+    .trust-item svg { color: var(--green); }
+
+    /* ── STICKY MOBILE CTA ── */
+    .mobile-sticky-cta {
+      display: none;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
+      z-index: 100;
+    }
+    .mobile-sticky-cta a {
+      display: block;
+      background: var(--amber);
+      color: #fff;
+      text-align: center;
+      text-decoration: none;
+      padding: 16px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 16px;
     }
 
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── RESPONSIVE ── */
     @media (max-width: 640px) {
-      .hero-title { font-size: 36px; letter-spacing: -1.5px; }
-      .hero-sub { font-size: 16px; }
-      .hero-cta { font-size: 16px; padding: 16px 28px; width: 100%; text-align: center; }
-      .for-cards { grid-template-columns: 1fr; }
-      .final-cta-title { font-size: 28px; }
-      nav { padding: 20px 0 16px; }
+      .hero { padding: 40px 0 0; }
+      .hero-title { letter-spacing: -1.5px; }
+      .btn-primary { width: 100%; justify-content: center; font-size: 16px; padding: 16px 24px; }
+      .pain-cards { grid-template-columns: 1fr; }
+      .transform-header,
+      .transform-body { grid-template-columns: 1fr; }
+      .transform-text.before-text { border-right: none; border-bottom: 1px solid var(--border); }
+      .transform-col.before-col { border-right: none; border-bottom: 1px solid var(--border); }
+      .feature-grid { grid-template-columns: 1fr; }
+      .score-preview { flex-direction: column; text-align: center; padding: 24px 20px; }
+      .score-chips { justify-content: center; }
+      .final-trust { flex-direction: column; gap: 10px; }
+      .mobile-sticky-cta { display: block; }
+      body { padding-bottom: 80px; }
+      .steps::before { display: none; }
     }
   </style>
 </head>
 <body>
 <div class="container">
 
+  <!-- NAV -->
   <nav>
-    <a href="/" class="nav-logo">Otak<span>.</span></a>
-    <a href="/app/" class="nav-cta">try free →</a>
+    <a href="/" class="nav-logo">Otak<em>.</em></a>
+    <div class="nav-right">
+      <a href="/app/" class="nav-cta">try free →</a>
+    </div>
   </nav>
 
   <!-- HERO -->
   <section class="hero">
-    <div class="hero-badge">for Malaysian university students</div>
-    <h1 class="hero-title">your essay.<br><em>your words.</em><br>actually.</h1>
-    <p class="hero-sub">Otak coaches you through your AI-assisted essay — section by section — until it genuinely sounds like you wrote it.</p>
-    <a href="/app/" class="hero-cta">check my essay free →</a>
-    <div class="hero-note">no account needed · works in English & Bahasa Malaysia</div>
+    <div class="hero-eyebrow">for Malaysian university students</div>
+
+    <h1 class="hero-title">
+      your essay.<br>
+      <em>your words.</em><br>
+      <span class="line-muted">actually.</span>
+    </h1>
+
+    <p class="hero-sub">
+      Submit AI-assisted essays you can <strong>actually defend</strong>.<br>
+      Otak coaches you section by section until it sounds genuinely like you.
+    </p>
+
+    <div class="hero-actions">
+      <a href="/app/" class="btn-primary">
+        check my essay free →
+      </a>
+      <div class="hero-trust">
+        no sign-up · works in English &amp; BM · <span>takes 2 minutes</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- UNI TICKER -->
+  <div class="uni-ticker">
+    <div class="ticker-label">students from</div>
+    <div class="ticker-track">
+      <span class="ticker-item">Universiti Malaya</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">UiTM</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">UTM</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">UPM</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">UKM</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">USM</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">Taylor's</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">Sunway</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">Monash Malaysia</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">UIAM</span>
+      <span class="ticker-item">·</span>
+      <!-- duplicate for seamless loop -->
+      <span class="ticker-item">Universiti Malaya</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">UiTM</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">UTM</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">UPM</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">UKM</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">USM</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">Taylor's</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">Sunway</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">Monash Malaysia</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">UIAM</span>
+      <span class="ticker-item">·</span>
+    </div>
+  </div>
+
+  <!-- PAIN -->
+  <section class="section reveal">
+    <div class="section-label">the problem</div>
+    <h2 class="section-headline">AI writing is obvious.<br>To your lecturer.</h2>
+    <p class="section-sub">You used AI to draft — nothing wrong with that. But the essay sounds like it came from a textbook written by a robot. That's the problem.</p>
+
+    <div class="pain-cards">
+      <div class="pain-card">
+        <div class="pain-icon">⚠</div>
+        <div class="pain-title">"plays a crucial role in today's world"</div>
+        <div class="pain-desc">AI filler that every lecturer has seen 40 times this semester. Zero marks for analysis.</div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">⚠</div>
+        <div class="pain-title">Generic claims, zero evidence</div>
+        <div class="pain-desc">AI writes confident-sounding assertions with no specific examples, dates, or sources to back them up.</div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">⚠</div>
+        <div class="pain-title">Doesn't answer the question</div>
+        <div class="pain-desc">AI drifts off-topic. Your essay addresses the general subject but misses what your specific assignment was asking.</div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">⚠</div>
+        <div class="pain-title">Sounds like everyone else's</div>
+        <div class="pain-desc">When 30 students use the same AI prompt, 30 essays sound identical. Markers notice immediately.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BEFORE / AFTER -->
+  <section class="section reveal">
+    <div class="section-label">the fix</div>
+    <h2 class="section-headline">What Otak actually does</h2>
+    <p class="section-sub">Otak doesn't rewrite your essay. It coaches you to rewrite it — using only your ideas, in your voice.</p>
+
+    <div class="transform-demo">
+      <div class="transform-header">
+        <div class="transform-col before-col">before otak</div>
+        <div class="transform-col after-col">after otak</div>
+      </div>
+      <div class="transform-body">
+        <div class="transform-text before-text">
+          "Social media plays a crucial role in shaping public opinion in today's world, as it allows individuals to share information and connect with others across the globe."
+        </div>
+        <div class="transform-text after-text">
+          "The 2019 Bersih 5 rally showed how WhatsApp group coordination tripled turnout compared to 2016 — when social media reach was lower and logistics relied on printed flyers."
+        </div>
+      </div>
+      <div class="transform-tag">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M5 7l1.5 1.5L9 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        same student's idea · specific · defensible in viva · 0 AI tells
+      </div>
+    </div>
   </section>
 
   <!-- HOW IT WORKS -->
-  <div class="section-title">how it works</div>
-  <div class="steps">
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-body">
-        <div class="step-title">paste your essay</div>
-        <div class="step-desc">Up to 1,000 words. Otak reads it like a strict lecturer and finds the 3 sections most likely to lose marks.</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-body">
-        <div class="step-title">pick your angle, tap your detail</div>
-        <div class="step-desc">For each weak section, Otak gives you concrete choices — specific examples, real arguments. Two taps and it builds a rewrite from your selections.</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-body">
-        <div class="step-title">get your updated essay</div>
-        <div class="step-desc">Every rewrite uses only your ideas — never invents content. Copy the full updated essay when you're done.</div>
-      </div>
-    </div>
-  </div>
+  <section class="section reveal">
+    <div class="section-label">how it works</div>
+    <h2 class="section-headline">Three steps.<br>Your essay, transformed.</h2>
 
-  <!-- PROOF -->
-  <div class="proof">
-    <div class="proof-label">before → after</div>
-    <div class="proof-original">"Social media plays a crucial role in shaping public opinion in today's world, as it allows individuals to share information and connect with others across the globe."</div>
-    <div class="proof-arrow">↓</div>
-    <div class="proof-rewrite">"The 2019 Bersih 5 rally in Malaysia showed how WhatsApp group coordination tripled turnout compared to 2016, when social media reach was lower."</div>
-    <div class="proof-meta">✓ same student's idea · specific · defensible in viva · 0 AI tells</div>
-  </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-dot">1</div>
+        <div class="step-content">
+          <div class="step-title">Paste your essay</div>
+          <div class="step-desc">Up to 1,000 words. Otak reads it like a strict lecturer and finds the <strong>3 sections most likely to lose marks</strong> — unsupported claims, AI filler, off-topic paragraphs.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">2</div>
+        <div class="step-content">
+          <div class="step-title">Pick your angle, tap your detail</div>
+          <div class="step-desc">For each weak section, Otak gives you <strong>concrete choices</strong> — real examples, specific arguments. Two taps and Otak builds a rewrite from your selection. No typing required.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">3</div>
+        <div class="step-content">
+          <div class="step-title">Copy your updated essay</div>
+          <div class="step-desc">Every rewrite uses <strong>only your ideas</strong> — Otak never invents content you didn't choose. You get your full essay back with the weak sections replaced. Copy, paste, submit.</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <!-- WHO IT'S FOR -->
-  <div class="section-title">who it's for</div>
-  <div class="for-cards">
-    <div class="for-card">
-      <div class="for-icon">🤖</div>
-      <div class="for-title">used AI to draft</div>
-      <div class="for-desc">Make it sound like you before submission. Otak strips out AI tells and builds in your voice.</div>
+  <!-- FEATURES -->
+  <section class="section reveal">
+    <div class="section-label">what's inside</div>
+    <h2 class="section-headline">Built for students<br>who actually need to pass</h2>
+
+    <div class="feature-grid" style="margin-top:36px">
+      <div class="feature-card">
+        <div class="feature-icon amber">📎</div>
+        <div class="feature-title">Upload your rubric</div>
+        <div class="feature-desc">Otak reads your exact marking criteria and tailors every critique to your assignment's rubric — not generic writing advice.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon green">🌐</div>
+        <div class="feature-title">English &amp; Bahasa Malaysia</div>
+        <div class="feature-desc">Full support for both languages. Switch anytime. Otak's coaching voice adapts to your chosen language.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon amber">🧠</div>
+        <div class="feature-title">Teaches, not just rewrites</div>
+        <div class="feature-desc">When you pick an answer that's too thin, Otak explains the principle of why — so you don't make the same mistake next essay.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon green">📊</div>
+        <div class="feature-title">Writing identity</div>
+        <div class="feature-desc">Sign in to track your patterns across essays. See which weaknesses keep appearing — and whether you're improving on them.</div>
+      </div>
     </div>
-    <div class="for-card">
-      <div class="for-icon">✍️</div>
-      <div class="for-title">wrote it yourself</div>
-      <div class="for-desc">Get coached on the sections that would lose marks — specific feedback, not vague suggestions.</div>
+  </section>
+
+  <!-- SCORE PREVIEW -->
+  <section class="section reveal">
+    <div class="score-preview">
+      <div class="score-big">84<span>/100</span></div>
+      <div class="score-right">
+        <div class="score-title">your authenticity score after Otak</div>
+        <div class="score-sub">Otak scores how genuinely your essay sounds like you — based on how deeply you engaged with each section, not just whether you changed words.</div>
+        <div class="score-chips">
+          <span class="score-chip lit">3 sections coached</span>
+          <span class="score-chip lit">avg depth: 4.1/5</span>
+          <span class="score-chip">0 AI tells remaining</span>
+        </div>
+      </div>
     </div>
-    <div class="for-card">
-      <div class="for-icon">📎</div>
-      <div class="for-title">have a rubric</div>
-      <div class="for-desc">Upload your assignment rubric and Otak tailors every critique to your exact marking criteria.</div>
+  </section>
+
+  <!-- QUOTE -->
+  <section class="section reveal">
+    <div class="quote-block">
+      <div class="quote-text">"I wasn't trying to cheat — I just didn't know how to make my own ideas sound as clear as the AI version. Otak helped me put my thinking back in."</div>
+      <div class="quote-attr">Year 2 student · Business Faculty · UiTM</div>
     </div>
-    <div class="for-card">
-      <div class="for-icon">🎓</div>
-      <div class="for-title">any subject</div>
-      <div class="for-desc">History, law, business, engineering, literature — Otak adapts to your topic and academic level.</div>
-    </div>
-  </div>
+  </section>
 
   <!-- FINAL CTA -->
-  <div class="final-cta">
-    <div class="final-cta-title">check your essay now</div>
-    <div class="final-cta-sub">free · no sign-up needed · takes 2 minutes</div>
-    <a href="/app/" class="hero-cta">check my essay free →</a>
-  </div>
+  <section class="final-section reveal">
+    <div class="final-pre">ready?</div>
+    <h2 class="final-title">Check your essay.<br><em>Right now.</em></h2>
+    <p class="final-sub">Free to try. No account needed. Works on your phone. Takes 2 minutes.</p>
+    <a href="/app/" class="btn-primary" style="display:inline-flex">check my essay free →</a>
+    <div class="final-trust">
+      <div class="trust-item">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#4A6B5A" stroke-width="1.5"/><path d="M5 7l1.5 1.5L9 5" stroke="#4A6B5A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        no sign-up required
+      </div>
+      <div class="trust-item">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#4A6B5A" stroke-width="1.5"/><path d="M5 7l1.5 1.5L9 5" stroke="#4A6B5A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        English &amp; Bahasa Malaysia
+      </div>
+      <div class="trust-item">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#4A6B5A" stroke-width="1.5"/><path d="M5 7l1.5 1.5L9 5" stroke="#4A6B5A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        your ideas, never invented
+      </div>
+    </div>
+  </section>
 
 </div>
+
+<!-- MOBILE STICKY CTA -->
+<div class="mobile-sticky-cta">
+  <a href="/app/">check my essay free →</a>
+</div>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal')
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible')
+        observer.unobserve(e.target)
+      }
+    })
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' })
+  reveals.forEach(el => observer.observe(el))
+
+  // Stagger pain cards and feature cards
+  document.querySelectorAll('.pain-card, .feature-card').forEach((el, i) => {
+    el.style.transitionDelay = (i * 80) + 'ms'
+    el.classList.add('reveal')
+    observer.observe(el)
+  })
+</script>
 </body>
 </html>
