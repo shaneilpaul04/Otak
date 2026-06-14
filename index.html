@@ -4,637 +4,381 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Otak — your essay. your words. actually.</title>
-  <meta name="description" content="Otak coaches you through your AI-assisted essay section by section until it genuinely sounds like you wrote it. For Malaysian university students."/>
+  <meta name="description" content="Otak catches AI writing before your lecturer does. For Malaysian university students."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700;1,900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --bg:         #F4EFE3;
-      --card:       #FAF5EA;
-      --card-warm:  #F8F1E0;
-      --ink:        #2A2520;
-      --ink-soft:   #4A4239;
-      --muted:      #8B7E70;
-      --border:     #DDD0BD;
-      --amber:      #B85C3E;
-      --amber-soft: #E8C8B5;
-      --amber-bg:   #F5E5DB;
-      --green:      #4A6B5A;
-      --green-bg:   #E2EBE3;
-      --green-border:#B5C9BC;
-      --danger:     #A04030;
+      --bg:          #F4EFE3;
+      --card:        #FAF5EA;
+      --card-warm:   #F8F1E0;
+      --ink:         #2A2520;
+      --ink-soft:    #3D342C;
+      --muted:       #6B5D52;
+      --border:      #D4C5AF;
+      --amber:       #B85C3E;
+      --amber-soft:  #E8C8B5;
+      --amber-bg:    #F5E5DB;
+      --green:       #3D5C4A;
+      --green-bg:    #DDE9E2;
+      --green-border:#A8C4B4;
+      --red-bg:      #FAEAE7;
+      --red-border:  #E8B0A0;
+      --red-text:    #8B2E1E;
     }
-    *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      background: var(--bg);
-      color: var(--ink);
-      font-family: 'Nunito', sans-serif;
-      font-size: 17px;
-      line-height: 1.65;
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      background:var(--bg);
+      color:var(--ink);
+      font-family:'Nunito',sans-serif;
+      font-size:17px;
+      line-height:1.65;
+      -webkit-font-smoothing:antialiased;
+      overflow-x:hidden;
     }
-
-    /* ── TOP ACCENT BAR ── */
-    body::before {
-      content: "";
-      display: block;
-      height: 4px;
-      background: linear-gradient(90deg, var(--amber), #D4784A, var(--amber));
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 200;
+    body::before{
+      content:"";display:block;height:4px;
+      background:linear-gradient(90deg,var(--amber),#D4784A,var(--amber));
+      position:fixed;top:0;left:0;right:0;z-index:200;
     }
-
-    .container { max-width: 740px; margin: 0 auto; padding: 0 20px; }
+    .container{max-width:720px;margin:0 auto;padding:0 22px}
 
     /* ── NAV ── */
-    nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 28px 0 0;
-      position: relative;
-      z-index: 10;
+    nav{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:28px 0 0;
     }
-    .nav-logo {
-      font-weight: 900;
-      font-size: 26px;
-      letter-spacing: -1px;
-      color: var(--ink);
-      text-decoration: none;
-      line-height: 1;
+    .nav-logo{
+      font-weight:900;font-size:26px;letter-spacing:-1px;
+      color:var(--ink);text-decoration:none;
     }
-    .nav-logo em { color: var(--amber); font-style: italic; }
-    .nav-right { display: flex; align-items: center; gap: 12px; }
-    .nav-link {
-      font-size: 14px;
-      color: var(--muted);
-      text-decoration: none;
-      font-weight: 600;
+    .nav-logo em{color:var(--amber);font-style:italic}
+    .nav-cta{
+      background:var(--ink);color:var(--bg);
+      text-decoration:none;padding:11px 22px;border-radius:99px;
+      font-size:14px;font-weight:800;transition:background 0.15s;
     }
-    .nav-link:hover { color: var(--ink); }
-    .nav-cta {
-      background: var(--ink);
-      color: var(--bg);
-      text-decoration: none;
-      padding: 10px 20px;
-      border-radius: 99px;
-      font-size: 14px;
-      font-weight: 700;
-      transition: background 0.15s;
-      white-space: nowrap;
-    }
-    .nav-cta:hover { background: var(--amber); }
+    .nav-cta:hover{background:var(--amber)}
 
     /* ── HERO ── */
-    .hero {
-      padding: 56px 0 0;
-      text-align: center;
-      position: relative;
-    }
-    .hero-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--amber-bg);
-      border: 1px solid var(--amber-soft);
-      color: var(--amber);
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 6px 16px;
-      border-radius: 99px;
-      margin-bottom: 28px;
-    }
-    .hero-eyebrow::before {
-      content: "";
-      width: 6px; height: 6px;
-      background: var(--amber);
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0%,100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(0.8); }
-    }
-    .hero-title {
-      font-size: clamp(38px, 8vw, 64px);
-      font-weight: 900;
-      line-height: 1.0;
-      letter-spacing: -2.5px;
-      color: var(--ink);
-      margin-bottom: 22px;
-    }
-    .hero-title em {
-      color: var(--amber);
-      font-style: italic;
-    }
-    .hero-title .line-muted {
-      color: var(--muted);
-      font-style: italic;
-      font-size: 0.75em;
-    }
-    .hero-sub {
-      font-size: 18px;
-      color: var(--ink-soft);
-      max-width: 48ch;
-      margin: 0 auto 36px;
-      line-height: 1.6;
-      font-weight: 500;
-    }
-    .hero-sub strong { color: var(--ink); font-weight: 800; }
-    .hero-actions {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 20px;
-    }
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--amber);
-      color: #fff;
-      text-decoration: none;
-      padding: 18px 36px;
-      border-radius: 14px;
-      font-size: 18px;
-      font-weight: 800;
-      transition: opacity 0.15s, transform 0.15s;
-      letter-spacing: -0.01em;
-      box-shadow: 0 8px 24px rgba(184,92,62,0.28);
-    }
-    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
-    .btn-primary:active { transform: translateY(0); }
-    .hero-trust {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      color: var(--muted);
-      letter-spacing: 0.05em;
-    }
-    .hero-trust span { color: var(--green); font-weight: 500; }
+    .hero{padding:52px 0 0;text-align:center}
 
-    /* ── UNI TICKER ── */
-    .uni-ticker {
-      margin: 36px 0 0;
-      overflow: hidden;
-      position: relative;
-      padding: 12px 0;
+    .hero-badge{
+      display:inline-flex;align-items:center;gap:8px;
+      background:var(--amber-bg);border:1.5px solid var(--amber-soft);
+      color:var(--amber);font-family:'DM Mono',monospace;
+      font-size:12px;letter-spacing:0.06em;text-transform:uppercase;
+      padding:7px 18px;border-radius:99px;margin-bottom:30px;
+      font-weight:500;
     }
-    .uni-ticker::before,
-    .uni-ticker::after {
-      content: "";
-      position: absolute;
-      top: 0; bottom: 0;
-      width: 60px;
-      z-index: 2;
+    .hero-badge-dot{
+      width:7px;height:7px;background:var(--amber);border-radius:50%;
+      animation:blink 2s infinite;
     }
-    .uni-ticker::before { left: 0; background: linear-gradient(90deg, var(--bg), transparent); }
-    .uni-ticker::after  { right: 0; background: linear-gradient(-90deg, var(--bg), transparent); }
-    .ticker-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    .ticker-track {
-      display: flex;
-      gap: 32px;
-      animation: ticker 20s linear infinite;
-      width: max-content;
-    }
-    .ticker-track:hover { animation-play-state: paused; }
-    @keyframes ticker {
-      from { transform: translateX(0); }
-      to { transform: translateX(-50%); }
-    }
-    .ticker-item {
-      font-family: 'DM Mono', monospace;
-      font-size: 12px;
-      color: var(--muted);
-      white-space: nowrap;
-      letter-spacing: 0.04em;
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+    .hero-intro{
+      font-size:17px;font-weight:700;color:var(--muted);
+      letter-spacing:-0.01em;margin-bottom:14px;
     }
 
-    /* ── SECTION WRAPPER ── */
-    .section {
-      padding: 72px 0 0;
+    .hero-title{
+      font-size:clamp(40px,9vw,68px);
+      font-weight:900;letter-spacing:-2.5px;
+      color:var(--ink);line-height:1.0;margin-bottom:26px;
     }
-    .section-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-bottom: 14px;
+    .hero-title em{color:var(--amber);font-style:italic}
+    .hero-title .softer{color:var(--muted);font-style:italic;font-size:0.78em}
+
+    .hero-sub{
+      font-size:19px;color:var(--ink-soft);
+      max-width:44ch;margin:0 auto 38px;
+      line-height:1.6;font-weight:600;
     }
-    .section-headline {
-      font-size: clamp(26px, 5vw, 38px);
-      font-weight: 900;
-      letter-spacing: -1.5px;
-      color: var(--ink);
-      line-height: 1.1;
-      margin-bottom: 14px;
+    .hero-sub em{color:var(--amber);font-style:normal;font-weight:800}
+
+    .btn-primary{
+      display:inline-flex;align-items:center;gap:10px;
+      background:var(--amber);color:#fff;
+      text-decoration:none;padding:20px 40px;
+      border-radius:16px;font-size:18px;font-weight:900;
+      transition:opacity 0.15s,transform 0.15s;
+      letter-spacing:-0.01em;
+      box-shadow:0 10px 28px rgba(184,92,62,0.32);
     }
-    .section-sub {
-      font-size: 16px;
-      color: var(--ink-soft);
-      max-width: 52ch;
-      line-height: 1.6;
-      margin-bottom: 36px;
+    .btn-primary:hover{opacity:0.9;transform:translateY(-2px)}
+    .btn-primary:active{transform:translateY(0)}
+
+    .hero-note{
+      margin-top:16px;
+      font-family:'DM Mono',monospace;font-size:12px;
+      color:var(--muted);letter-spacing:0.04em;
+    }
+    .hero-note strong{color:var(--green);font-weight:600}
+
+    /* ── TICKER ── */
+    .ticker-wrap{
+      margin:40px 0 0;overflow:hidden;position:relative;padding:10px 0;
+    }
+    .ticker-wrap::before,.ticker-wrap::after{
+      content:"";position:absolute;top:0;bottom:0;width:80px;z-index:2;
+    }
+    .ticker-wrap::before{left:0;background:linear-gradient(90deg,var(--bg),transparent)}
+    .ticker-wrap::after{right:0;background:linear-gradient(-90deg,var(--bg),transparent)}
+    .ticker-label{
+      font-family:'DM Mono',monospace;font-size:11px;
+      color:var(--muted);text-transform:uppercase;
+      letter-spacing:0.1em;text-align:center;margin-bottom:10px;
+    }
+    .ticker-track{
+      display:flex;gap:28px;
+      animation:scroll 22s linear infinite;width:max-content;
+    }
+    @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+    .ticker-item{
+      font-family:'DM Mono',monospace;font-size:12px;
+      color:var(--muted);white-space:nowrap;letter-spacing:0.03em;
     }
 
-    /* ── PAIN SECTION ── */
-    .pain-cards {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 0;
+    /* ── SHARED SECTION CHROME ── */
+    .section{padding:72px 0 0}
+    .s-label{
+      font-family:'DM Mono',monospace;font-size:11px;
+      color:var(--muted);text-transform:uppercase;
+      letter-spacing:0.12em;margin-bottom:12px;
     }
-    .pain-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 22px 20px;
-      position: relative;
-      overflow: hidden;
+    .s-title{
+      font-size:clamp(28px,5.5vw,42px);font-weight:900;
+      letter-spacing:-1.5px;color:var(--ink);
+      line-height:1.08;margin-bottom:14px;
     }
-    .pain-card::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: var(--amber);
-      opacity: 0.3;
-    }
-    .pain-icon {
-      width: 36px; height: 36px;
-      background: var(--amber-bg);
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 12px;
-      font-size: 18px;
-    }
-    .pain-title {
-      font-weight: 800;
-      font-size: 15px;
-      color: var(--ink);
-      margin-bottom: 6px;
-      line-height: 1.3;
-    }
-    .pain-desc {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.5;
+    .s-sub{
+      font-size:16px;color:var(--ink-soft);
+      max-width:50ch;line-height:1.65;margin-bottom:36px;
+      font-weight:600;
     }
 
-    /* ── BEFORE/AFTER ── */
-    .transform-demo {
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      border-radius: 20px;
-      overflow: hidden;
-      margin-top: 36px;
+    /* ── PAIN ── */
+    .pain-grid{
+      display:grid;grid-template-columns:1fr 1fr;gap:12px;
     }
-    .transform-header {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      border-bottom: 1px solid var(--border);
+    .pain-card{
+      background:var(--red-bg);
+      border:1.5px solid var(--red-border);
+      border-radius:16px;padding:22px 20px;
     }
-    .transform-col {
-      padding: 16px 20px;
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
+    .pain-tag{
+      display:inline-block;
+      font-family:'DM Mono',monospace;font-size:10px;
+      color:var(--red-text);text-transform:uppercase;
+      letter-spacing:0.08em;margin-bottom:10px;
+      background:rgba(168,46,30,0.1);padding:3px 10px;border-radius:99px;
     }
-    .transform-col.before-col {
-      color: var(--danger);
-      border-right: 1px solid var(--border);
-      background: #FDF2F0;
+    .pain-quote{
+      font-size:14px;font-weight:800;color:var(--red-text);
+      line-height:1.4;margin-bottom:8px;font-style:italic;
     }
-    .transform-col.after-col {
-      color: var(--green);
-      background: var(--green-bg);
-    }
-    .transform-col.before-col::before { content: "✕  "; }
-    .transform-col.after-col::before  { content: "✓  "; }
-    .transform-body {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
-    .transform-text {
-      padding: 22px 20px;
-      font-size: 14px;
-      line-height: 1.7;
-    }
-    .transform-text.before-text {
-      color: var(--muted);
-      font-style: italic;
-      border-right: 1px solid var(--border);
-      background: #FDF7F6;
-    }
-    .transform-text.after-text {
-      color: var(--ink);
-      background: var(--green-bg);
-      font-weight: 600;
-    }
-    .transform-tag {
-      display: flex;
-      gap: 8px;
-      padding: 12px 20px;
-      background: var(--green-bg);
-      border-top: 1px solid var(--green-border);
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      color: var(--green);
+    .pain-why{
+      font-size:13px;color:var(--muted);line-height:1.5;font-weight:600;
     }
 
-    /* ── HOW IT WORKS ── */
-    .steps {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      position: relative;
+    /* ── BEFORE / AFTER ── */
+    .ba-wrap{
+      border-radius:20px;overflow:hidden;
+      border:1.5px solid var(--border);
+      background:var(--card);margin-top:0;
     }
-    .steps::before {
-      content: "";
-      position: absolute;
-      left: 19px;
-      top: 40px;
-      bottom: 40px;
-      width: 2px;
-      background: linear-gradient(to bottom, var(--amber), var(--green));
-      opacity: 0.25;
+    .ba-heads{
+      display:grid;grid-template-columns:1fr 1fr;
     }
-    .step {
-      display: flex;
-      gap: 20px;
-      padding: 24px 0;
-      position: relative;
+    .ba-head{
+      padding:14px 20px;
+      font-family:'DM Mono',monospace;font-size:12px;
+      font-weight:500;text-transform:uppercase;letter-spacing:0.08em;
     }
-    .step-dot {
-      width: 40px;
-      height: 40px;
-      flex-shrink: 0;
-      background: var(--card);
-      border: 2px solid var(--border);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Nunito', sans-serif;
-      font-weight: 900;
-      font-size: 16px;
-      color: var(--amber);
-      position: relative;
-      z-index: 1;
-      transition: all 0.2s;
+    .ba-head.bad{
+      background:var(--red-bg);color:var(--red-text);
+      border-bottom:1.5px solid var(--red-border);
+      border-right:1.5px solid var(--border);
     }
-    .step:hover .step-dot {
-      background: var(--amber);
-      border-color: var(--amber);
-      color: #fff;
+    .ba-head.good{
+      background:var(--green-bg);color:var(--green);
+      border-bottom:1.5px solid var(--green-border);
     }
-    .step-content { padding-top: 8px; }
-    .step-title {
-      font-weight: 800;
-      font-size: 17px;
-      color: var(--ink);
-      margin-bottom: 4px;
+    .ba-body{display:grid;grid-template-columns:1fr 1fr}
+    .ba-text{padding:24px 22px;font-size:15px;line-height:1.7;font-weight:600}
+    .ba-text.bad{
+      color:var(--ink-soft);font-style:italic;
+      background:var(--red-bg);
+      border-right:1.5px solid var(--border);
     }
-    .step-desc {
-      font-size: 15px;
-      color: var(--ink-soft);
-      line-height: 1.55;
-      max-width: 52ch;
+    .ba-text.good{
+      color:var(--ink);font-weight:700;
+      background:var(--green-bg);
     }
-    .step-desc strong { color: var(--ink); font-weight: 700; }
+    .ba-footer{
+      display:flex;align-items:center;gap:8px;
+      padding:14px 22px;
+      background:var(--green-bg);
+      border-top:1.5px solid var(--green-border);
+      font-family:'DM Mono',monospace;font-size:12px;
+      color:var(--green);font-weight:500;
+    }
+    .ba-check{
+      width:18px;height:18px;flex-shrink:0;
+      background:var(--green);border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .ba-check svg{width:10px;height:10px}
 
-    /* ── FEATURE GRID ── */
-    .feature-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
+    /* ── STEPS ── */
+    .steps{display:flex;flex-direction:column;gap:0;position:relative}
+    .steps::before{
+      content:"";position:absolute;left:19px;top:44px;bottom:44px;
+      width:2px;background:linear-gradient(to bottom,var(--amber-soft),var(--green-border));
     }
-    .feature-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 22px 20px;
-      transition: border-color 0.15s, transform 0.15s;
+    .step{display:flex;gap:22px;padding:22px 0;align-items:flex-start}
+    .step-num{
+      width:40px;height:40px;flex-shrink:0;
+      background:var(--card);border:2px solid var(--border);
+      border-radius:50%;display:flex;align-items:center;justify-content:center;
+      font-weight:900;font-size:16px;color:var(--amber);
+      position:relative;z-index:1;transition:all 0.2s;
     }
-    .feature-card:hover {
-      border-color: var(--amber-soft);
-      transform: translateY(-2px);
+    .step:hover .step-num{
+      background:var(--amber);border-color:var(--amber);color:#fff;
     }
-    .feature-icon {
-      width: 40px; height: 40px;
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 14px;
-      font-size: 20px;
-    }
-    .feature-icon.amber { background: var(--amber-bg); }
-    .feature-icon.green { background: var(--green-bg); }
-    .feature-title {
-      font-weight: 800;
-      font-size: 15px;
-      color: var(--ink);
-      margin-bottom: 6px;
-    }
-    .feature-desc {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.55;
-    }
+    .step-body{padding-top:6px}
+    .step-title{font-weight:900;font-size:18px;color:var(--ink);margin-bottom:6px}
+    .step-desc{font-size:15px;color:var(--ink-soft);line-height:1.6;max-width:50ch;font-weight:600}
+    .step-desc strong{color:var(--ink);font-weight:800}
 
-    /* ── SCORE PREVIEW ── */
-    .score-preview {
-      background: var(--ink);
-      border-radius: 20px;
-      padding: 32px 28px;
-      color: var(--bg);
-      display: flex;
-      align-items: center;
-      gap: 28px;
-      margin-top: 36px;
+    /* ── FEATURES ── */
+    .feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .feat-card{
+      background:var(--card);border:1.5px solid var(--border);
+      border-radius:16px;padding:24px 20px;
+      transition:border-color 0.2s,transform 0.2s;
     }
-    .score-big {
-      font-family: 'Nunito', sans-serif;
-      font-weight: 900;
-      font-size: 72px;
-      line-height: 1;
-      letter-spacing: -3px;
-      color: var(--amber);
-      flex-shrink: 0;
+    .feat-card:hover{border-color:var(--amber-soft);transform:translateY(-2px)}
+    .feat-num{
+      font-family:'DM Mono',monospace;font-size:11px;
+      color:var(--amber);letter-spacing:0.08em;
+      text-transform:uppercase;margin-bottom:10px;
     }
-    .score-big span { font-size: 28px; color: var(--muted); }
-    .score-right { flex: 1; }
-    .score-title {
-      font-weight: 800;
-      font-size: 19px;
-      color: var(--bg);
-      margin-bottom: 8px;
-      line-height: 1.3;
+    .feat-title{font-weight:900;font-size:16px;color:var(--ink);margin-bottom:6px}
+    .feat-desc{font-size:14px;color:var(--muted);line-height:1.55;font-weight:600}
+
+    /* ── SCORE BLOCK ── */
+    .score-block{
+      background:var(--ink);border-radius:20px;
+      padding:32px 28px;display:flex;align-items:center;gap:24px;
+      margin-top:36px;
     }
-    .score-sub {
-      font-size: 14px;
-      color: var(--muted);
-      line-height: 1.5;
+    .score-num{
+      font-weight:900;font-size:72px;letter-spacing:-3px;
+      color:var(--amber);line-height:1;flex-shrink:0;
     }
-    .score-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 14px;
+    .score-num span{font-size:28px;color:var(--muted);letter-spacing:0}
+    .score-body{}
+    .score-title{font-weight:800;font-size:18px;color:#FAF5EA;margin-bottom:8px;line-height:1.3}
+    .score-desc{font-size:14px;color:#9A8C80;line-height:1.55;font-weight:600}
+    .score-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+    .score-pill{
+      background:rgba(255,255,255,0.08);
+      border:1px solid rgba(255,255,255,0.14);
+      border-radius:99px;padding:5px 13px;
+      font-family:'DM Mono',monospace;font-size:11px;
+      color:#9A8C80;letter-spacing:0.03em;
     }
-    .score-chip {
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 99px;
-      padding: 4px 12px;
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      color: var(--muted);
-      letter-spacing: 0.04em;
-    }
-    .score-chip.lit { background: rgba(184,92,62,0.2); border-color: rgba(184,92,62,0.3); color: var(--amber); }
+    .score-pill.on{background:rgba(184,92,62,0.22);border-color:rgba(184,92,62,0.4);color:var(--amber)}
 
     /* ── QUOTE ── */
-    .quote-block {
-      background: var(--card-warm);
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--amber);
-      border-radius: 16px;
-      padding: 28px 26px;
-      margin-top: 36px;
+    .quote{
+      background:var(--card-warm);border:1.5px solid var(--border);
+      border-left:4px solid var(--amber);border-radius:16px;
+      padding:28px 26px;margin-top:36px;
     }
-    .quote-text {
-      font-size: 18px;
-      font-weight: 700;
-      font-style: italic;
-      color: var(--ink);
-      line-height: 1.55;
-      margin-bottom: 14px;
+    .quote-text{
+      font-size:19px;font-weight:700;font-style:italic;
+      color:var(--ink);line-height:1.55;margin-bottom:14px;
     }
-    .quote-attr {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+    .quote-who{
+      font-family:'DM Mono',monospace;font-size:12px;
+      color:var(--muted);letter-spacing:0.06em;font-weight:500;
     }
 
     /* ── FINAL CTA ── */
-    .final-section {
-      padding: 80px 0 100px;
-      text-align: center;
-      border-top: 1px solid var(--border);
-      margin-top: 72px;
+    .final{
+      padding:80px 0 120px;
+      text-align:center;
+      border-top:1.5px solid var(--border);
+      margin-top:72px;
     }
-    .final-pre {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 16px;
+    .final-kicker{
+      font-family:'DM Mono',monospace;font-size:12px;
+      color:var(--muted);text-transform:uppercase;
+      letter-spacing:0.1em;margin-bottom:16px;
     }
-    .final-title {
-      font-size: clamp(32px, 6vw, 52px);
-      font-weight: 900;
-      letter-spacing: -2px;
-      color: var(--ink);
-      line-height: 1.05;
-      margin-bottom: 16px;
+    .final-title{
+      font-size:clamp(34px,7vw,56px);font-weight:900;
+      letter-spacing:-2px;color:var(--ink);
+      line-height:1.05;margin-bottom:16px;
     }
-    .final-title em { color: var(--amber); font-style: italic; }
-    .final-sub {
-      color: var(--muted);
-      font-size: 16px;
-      margin-bottom: 32px;
-      max-width: 42ch;
-      margin-left: auto;
-      margin-right: auto;
+    .final-title em{color:var(--amber);font-style:italic}
+    .final-sub{
+      color:var(--ink-soft);font-size:17px;font-weight:600;
+      margin-bottom:32px;max-width:40ch;margin-left:auto;margin-right:auto;
     }
-    .final-trust {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 20px;
-      margin-top: 20px;
+    .trust-row{
+      display:flex;align-items:center;justify-content:center;
+      flex-wrap:wrap;gap:22px;margin-top:20px;
     }
-    .trust-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      color: var(--muted);
-      letter-spacing: 0.04em;
+    .trust-item{
+      display:flex;align-items:center;gap:6px;
+      font-family:'DM Mono',monospace;font-size:12px;
+      color:var(--muted);font-weight:500;
     }
-    .trust-item svg { color: var(--green); }
+    .trust-dot{
+      width:6px;height:6px;border-radius:50%;
+      background:var(--green);flex-shrink:0;
+    }
 
     /* ── STICKY MOBILE CTA ── */
-    .mobile-sticky-cta {
-      display: none;
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      background: var(--bg);
-      border-top: 1px solid var(--border);
-      padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
-      z-index: 100;
+    .mob-cta{
+      display:none;position:fixed;bottom:0;left:0;right:0;
+      background:rgba(244,239,227,0.95);backdrop-filter:blur(8px);
+      border-top:1px solid var(--border);
+      padding:12px 20px calc(12px + env(safe-area-inset-bottom));
+      z-index:150;
     }
-    .mobile-sticky-cta a {
-      display: block;
-      background: var(--amber);
-      color: #fff;
-      text-align: center;
-      text-decoration: none;
-      padding: 16px;
-      border-radius: 14px;
-      font-weight: 800;
-      font-size: 16px;
+    .mob-cta a{
+      display:block;background:var(--amber);color:#fff;
+      text-align:center;text-decoration:none;
+      padding:16px;border-radius:14px;
+      font-weight:900;font-size:16px;
     }
 
     /* ── SCROLL REVEAL ── */
-    .reveal {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.5s ease, transform 0.5s ease;
-    }
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .reveal{opacity:0;transform:translateY(24px);transition:opacity 0.55s ease,transform 0.55s ease}
+    .reveal.in{opacity:1;transform:translateY(0)}
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 640px) {
-      .hero { padding: 40px 0 0; }
-      .hero-title { letter-spacing: -1.5px; }
-      .btn-primary { width: 100%; justify-content: center; font-size: 16px; padding: 16px 24px; }
-      .pain-cards { grid-template-columns: 1fr; }
-      .transform-header,
-      .transform-body { grid-template-columns: 1fr; }
-      .transform-text.before-text { border-right: none; border-bottom: 1px solid var(--border); }
-      .transform-col.before-col { border-right: none; border-bottom: 1px solid var(--border); }
-      .feature-grid { grid-template-columns: 1fr; }
-      .score-preview { flex-direction: column; text-align: center; padding: 24px 20px; }
-      .score-chips { justify-content: center; }
-      .final-trust { flex-direction: column; gap: 10px; }
-      .mobile-sticky-cta { display: block; }
-      body { padding-bottom: 80px; }
-      .steps::before { display: none; }
+    @media(max-width:640px){
+      .hero{padding:36px 0 0}
+      .btn-primary{width:100%;justify-content:center;font-size:17px;padding:18px 24px}
+      .pain-grid{grid-template-columns:1fr}
+      .ba-heads,.ba-body{grid-template-columns:1fr}
+      .ba-text.bad{border-right:none;border-bottom:1.5px solid var(--border)}
+      .ba-head.bad{border-right:none;border-bottom:1.5px solid var(--red-border)}
+      .feat-grid{grid-template-columns:1fr}
+      .score-block{flex-direction:column;text-align:center;padding:24px 20px}
+      .score-pills{justify-content:center}
+      .trust-row{flex-direction:column;gap:12px}
+      .steps::before{display:none}
+      .mob-cta{display:block}
+      body{padding-bottom:80px}
     }
   </style>
 </head>
@@ -644,165 +388,149 @@
   <!-- NAV -->
   <nav>
     <a href="/" class="nav-logo">Otak<em>.</em></a>
-    <div class="nav-right">
-      <a href="/app/" class="nav-cta">try free →</a>
-    </div>
+    <a href="/app/" class="nav-cta">try free →</a>
   </nav>
 
   <!-- HERO -->
   <section class="hero">
-    <div class="hero-eyebrow">for Malaysian university students</div>
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      for Malaysian university students
+    </div>
 
+    <p class="hero-intro">you used AI to write your essay.</p>
     <h1 class="hero-title">
-      your essay.<br>
-      <em>your words.</em><br>
-      <span class="line-muted">actually.</span>
+      your lecturer<br>
+      <em>already knows.</em>
     </h1>
 
     <p class="hero-sub">
-      Submit AI-assisted essays you can <strong>actually defend</strong>.<br>
-      Otak coaches you section by section until it sounds genuinely like you.
+      Otak fixes what gives it away —
+      section by section — until your essay
+      sounds like <em>you</em> actually wrote it.
     </p>
 
-    <div class="hero-actions">
-      <a href="/app/" class="btn-primary">
-        check my essay free →
-      </a>
-      <div class="hero-trust">
-        no sign-up · works in English &amp; BM · <span>takes 2 minutes</span>
-      </div>
+    <a href="/app/" class="btn-primary">
+      check my essay free →
+    </a>
+    <div class="hero-note">
+      no account needed &nbsp;·&nbsp; <strong>free to try</strong> &nbsp;·&nbsp; English & BM
     </div>
   </section>
 
-  <!-- UNI TICKER -->
-  <div class="uni-ticker">
-    <div class="ticker-label">students from</div>
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker-label">students using Otak from</div>
     <div class="ticker-track">
-      <span class="ticker-item">Universiti Malaya</span>
-      <span class="ticker-item">·</span>
-      <span class="ticker-item">UiTM</span>
-      <span class="ticker-item">·</span>
-      <span class="ticker-item">UTM</span>
-      <span class="ticker-item">·</span>
-      <span class="ticker-item">UPM</span>
-      <span class="ticker-item">·</span>
-      <span class="ticker-item">UKM</span>
-      <span class="ticker-item">·</span>
-      <span class="ticker-item">USM</span>
-      <span class="ticker-item">·</span>
-      <span class="ticker-item">Taylor's</span>
-      <span class="ticker-item">·</span>
-      <span class="ticker-item">Sunway</span>
-      <span class="ticker-item">·</span>
-      <span class="ticker-item">Monash Malaysia</span>
-      <span class="ticker-item">·</span>
-      <span class="ticker-item">UIAM</span>
-      <span class="ticker-item">·</span>
-      <!-- duplicate for seamless loop -->
-      <span class="ticker-item">Universiti Malaya</span>
-      <span class="ticker-item">·</span>
-      <span class="ticker-item">UiTM</span>
-      <span class="ticker-item">·</span>
-      <span class="ticker-item">UTM</span>
-      <span class="ticker-item">·</span>
-      <span class="ticker-item">UPM</span>
-      <span class="ticker-item">·</span>
-      <span class="ticker-item">UKM</span>
-      <span class="ticker-item">·</span>
-      <span class="ticker-item">USM</span>
-      <span class="ticker-item">·</span>
-      <span class="ticker-item">Taylor's</span>
-      <span class="ticker-item">·</span>
-      <span class="ticker-item">Sunway</span>
-      <span class="ticker-item">·</span>
-      <span class="ticker-item">Monash Malaysia</span>
-      <span class="ticker-item">·</span>
-      <span class="ticker-item">UIAM</span>
-      <span class="ticker-item">·</span>
+      <span class="ticker-item">Universiti Malaya</span><span class="ticker-item">·</span>
+      <span class="ticker-item">UiTM</span><span class="ticker-item">·</span>
+      <span class="ticker-item">UTM</span><span class="ticker-item">·</span>
+      <span class="ticker-item">UPM</span><span class="ticker-item">·</span>
+      <span class="ticker-item">UKM</span><span class="ticker-item">·</span>
+      <span class="ticker-item">USM</span><span class="ticker-item">·</span>
+      <span class="ticker-item">Taylor's University</span><span class="ticker-item">·</span>
+      <span class="ticker-item">Sunway</span><span class="ticker-item">·</span>
+      <span class="ticker-item">Monash Malaysia</span><span class="ticker-item">·</span>
+      <span class="ticker-item">UIAM</span><span class="ticker-item">·</span>
+      <span class="ticker-item">Universiti Malaya</span><span class="ticker-item">·</span>
+      <span class="ticker-item">UiTM</span><span class="ticker-item">·</span>
+      <span class="ticker-item">UTM</span><span class="ticker-item">·</span>
+      <span class="ticker-item">UPM</span><span class="ticker-item">·</span>
+      <span class="ticker-item">UKM</span><span class="ticker-item">·</span>
+      <span class="ticker-item">USM</span><span class="ticker-item">·</span>
+      <span class="ticker-item">Taylor's University</span><span class="ticker-item">·</span>
+      <span class="ticker-item">Sunway</span><span class="ticker-item">·</span>
+      <span class="ticker-item">Monash Malaysia</span><span class="ticker-item">·</span>
+      <span class="ticker-item">UIAM</span><span class="ticker-item">·</span>
     </div>
   </div>
 
   <!-- PAIN -->
   <section class="section reveal">
-    <div class="section-label">the problem</div>
-    <h2 class="section-headline">AI writing is obvious.<br>To your lecturer.</h2>
-    <p class="section-sub">You used AI to draft — nothing wrong with that. But the essay sounds like it came from a textbook written by a robot. That's the problem.</p>
+    <div class="s-label">what gives it away</div>
+    <h2 class="s-title">These phrases are<br>instant red flags.</h2>
+    <p class="s-sub">Lecturers have seen them thousands of times. If they're in your essay, you're losing marks before they even read your argument.</p>
 
-    <div class="pain-cards">
+    <div class="pain-grid">
       <div class="pain-card">
-        <div class="pain-icon">⚠</div>
-        <div class="pain-title">"plays a crucial role in today's world"</div>
-        <div class="pain-desc">AI filler that every lecturer has seen 40 times this semester. Zero marks for analysis.</div>
+        <div class="pain-tag">AI filler</div>
+        <div class="pain-quote">"plays a crucial role in today's world"</div>
+        <div class="pain-why">Zero analysis. Every AI writes this. Markers skip past it.</div>
       </div>
       <div class="pain-card">
-        <div class="pain-icon">⚠</div>
-        <div class="pain-title">Generic claims, zero evidence</div>
-        <div class="pain-desc">AI writes confident-sounding assertions with no specific examples, dates, or sources to back them up.</div>
+        <div class="pain-tag">no evidence</div>
+        <div class="pain-quote">"this significantly impacted society"</div>
+        <div class="pain-why">Big claim, no example. A marker can't give marks for something they can't verify.</div>
       </div>
       <div class="pain-card">
-        <div class="pain-icon">⚠</div>
-        <div class="pain-title">Doesn't answer the question</div>
-        <div class="pain-desc">AI drifts off-topic. Your essay addresses the general subject but misses what your specific assignment was asking.</div>
+        <div class="pain-tag">AI transition</div>
+        <div class="pain-quote">"Furthermore, it is important to note that..."</div>
+        <div class="pain-why">No human writes like this. It screams GPT and kills your credibility.</div>
       </div>
       <div class="pain-card">
-        <div class="pain-icon">⚠</div>
-        <div class="pain-title">Sounds like everyone else's</div>
-        <div class="pain-desc">When 30 students use the same AI prompt, 30 essays sound identical. Markers notice immediately.</div>
+        <div class="pain-tag">sounds generic</div>
+        <div class="pain-quote">"There are various perspectives on this topic"</div>
+        <div class="pain-why">You sound like every other student. Nothing in here is yours.</div>
       </div>
     </div>
   </section>
 
   <!-- BEFORE / AFTER -->
   <section class="section reveal">
-    <div class="section-label">the fix</div>
-    <h2 class="section-headline">What Otak actually does</h2>
-    <p class="section-sub">Otak doesn't rewrite your essay. It coaches you to rewrite it — using only your ideas, in your voice.</p>
+    <div class="s-label">what Otak does</div>
+    <h2 class="s-title">Same idea.<br>Sounds like you wrote it.</h2>
+    <p class="s-sub">Otak doesn't swap your words. It asks you what you actually think — then rebuilds the sentence from your answer.</p>
 
-    <div class="transform-demo">
-      <div class="transform-header">
-        <div class="transform-col before-col">before otak</div>
-        <div class="transform-col after-col">after otak</div>
+    <div class="ba-wrap" style="margin-top:8px">
+      <div class="ba-heads">
+        <div class="ba-head bad">✕ &nbsp;before otak</div>
+        <div class="ba-head good">✓ &nbsp;after otak</div>
       </div>
-      <div class="transform-body">
-        <div class="transform-text before-text">
-          "Social media plays a crucial role in shaping public opinion in today's world, as it allows individuals to share information and connect with others across the globe."
+      <div class="ba-body">
+        <div class="ba-text bad">
+          "Social media plays a crucial role in shaping public opinion in today's increasingly interconnected world."
         </div>
-        <div class="transform-text after-text">
-          "The 2019 Bersih 5 rally showed how WhatsApp group coordination tripled turnout compared to 2016 — when social media reach was lower and logistics relied on printed flyers."
+        <div class="ba-text good">
+          "The Bersih 5 rally in 2019 showed how WhatsApp coordination tripled attendance compared to 2016 — proof that social media changes outcomes, not just opinions."
         </div>
       </div>
-      <div class="transform-tag">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M5 7l1.5 1.5L9 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        same student's idea · specific · defensible in viva · 0 AI tells
+      <div class="ba-footer">
+        <div class="ba-check">
+          <svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 5l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        student's own idea &nbsp;·&nbsp; specific &nbsp;·&nbsp; defensible &nbsp;·&nbsp; 0 AI phrases
       </div>
     </div>
   </section>
 
   <!-- HOW IT WORKS -->
   <section class="section reveal">
-    <div class="section-label">how it works</div>
-    <h2 class="section-headline">Three steps.<br>Your essay, transformed.</h2>
+    <div class="s-label">how it works</div>
+    <h2 class="s-title">Two taps.<br>One section fixed.</h2>
+    <p class="s-sub">No typing essays from scratch. No generic suggestions. You pick, Otak builds. Your ideas, your voice.</p>
 
-    <div class="steps">
+    <div class="steps" style="margin-top:8px">
       <div class="step">
-        <div class="step-dot">1</div>
-        <div class="step-content">
+        <div class="step-num">1</div>
+        <div class="step-body">
           <div class="step-title">Paste your essay</div>
-          <div class="step-desc">Up to 1,000 words. Otak reads it like a strict lecturer and finds the <strong>3 sections most likely to lose marks</strong> — unsupported claims, AI filler, off-topic paragraphs.</div>
+          <div class="step-desc">Otak reads it like a strict lecturer. It finds the <strong>3 sections most likely to lose marks</strong> and tells you exactly why each one is weak.</div>
         </div>
       </div>
       <div class="step">
-        <div class="step-dot">2</div>
-        <div class="step-content">
+        <div class="step-num">2</div>
+        <div class="step-body">
           <div class="step-title">Pick your angle, tap your detail</div>
-          <div class="step-desc">For each weak section, Otak gives you <strong>concrete choices</strong> — real examples, specific arguments. Two taps and Otak builds a rewrite from your selection. No typing required.</div>
+          <div class="step-desc">For each weak section, you get <strong>concrete choices</strong> — real examples, specific arguments. Tap the one that fits your essay. Otak rewrites from your selection.</div>
         </div>
       </div>
       <div class="step">
-        <div class="step-dot">3</div>
-        <div class="step-content">
-          <div class="step-title">Copy your updated essay</div>
-          <div class="step-desc">Every rewrite uses <strong>only your ideas</strong> — Otak never invents content you didn't choose. You get your full essay back with the weak sections replaced. Copy, paste, submit.</div>
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Copy. Submit. Done.</div>
+          <div class="step-desc">Your full updated essay — with the weak sections replaced by <strong>your ideas, your voice, zero AI tells</strong>. Copy it, paste it, hand it in.</div>
         </div>
       </div>
     </div>
@@ -810,104 +538,94 @@
 
   <!-- FEATURES -->
   <section class="section reveal">
-    <div class="section-label">what's inside</div>
-    <h2 class="section-headline">Built for students<br>who actually need to pass</h2>
+    <div class="s-label">what's inside</div>
+    <h2 class="s-title">Everything a student<br>actually needs.</h2>
 
-    <div class="feature-grid" style="margin-top:36px">
-      <div class="feature-card">
-        <div class="feature-icon amber">📎</div>
-        <div class="feature-title">Upload your rubric</div>
-        <div class="feature-desc">Otak reads your exact marking criteria and tailors every critique to your assignment's rubric — not generic writing advice.</div>
+    <div class="feat-grid" style="margin-top:28px">
+      <div class="feat-card">
+        <div class="feat-num">01</div>
+        <div class="feat-title">Upload your rubric</div>
+        <div class="feat-desc">Otak reads your exact marking criteria and tailors every critique to your assignment — not generic writing advice.</div>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon green">🌐</div>
-        <div class="feature-title">English &amp; Bahasa Malaysia</div>
-        <div class="feature-desc">Full support for both languages. Switch anytime. Otak's coaching voice adapts to your chosen language.</div>
+      <div class="feat-card">
+        <div class="feat-num">02</div>
+        <div class="feat-title">English & Bahasa Malaysia</div>
+        <div class="feat-desc">Full support for both languages. Coaching voice adapts. Switch anytime.</div>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon amber">🧠</div>
-        <div class="feature-title">Teaches, not just rewrites</div>
-        <div class="feature-desc">When you pick an answer that's too thin, Otak explains the principle of why — so you don't make the same mistake next essay.</div>
+      <div class="feat-card">
+        <div class="feat-num">03</div>
+        <div class="feat-title">Teaches you the why</div>
+        <div class="feat-desc">When your answer is too thin, Otak explains the principle — so you improve, not just this essay but the next one too.</div>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon green">📊</div>
-        <div class="feature-title">Writing identity</div>
-        <div class="feature-desc">Sign in to track your patterns across essays. See which weaknesses keep appearing — and whether you're improving on them.</div>
+      <div class="feat-card">
+        <div class="feat-num">04</div>
+        <div class="feat-title">Track your patterns</div>
+        <div class="feat-desc">Sign in to see which weaknesses keep showing up across your essays — and whether you're actually getting better.</div>
       </div>
     </div>
   </section>
 
-  <!-- SCORE PREVIEW -->
+  <!-- SCORE -->
   <section class="section reveal">
-    <div class="score-preview">
-      <div class="score-big">84<span>/100</span></div>
-      <div class="score-right">
+    <div class="score-block">
+      <div class="score-num">84<span>/100</span></div>
+      <div class="score-body">
         <div class="score-title">your authenticity score after Otak</div>
-        <div class="score-sub">Otak scores how genuinely your essay sounds like you — based on how deeply you engaged with each section, not just whether you changed words.</div>
-        <div class="score-chips">
-          <span class="score-chip lit">3 sections coached</span>
-          <span class="score-chip lit">avg depth: 4.1/5</span>
-          <span class="score-chip">0 AI tells remaining</span>
+        <div class="score-desc">Otak scores how genuinely your essay sounds like you — based on how deeply you engaged, not just whether words changed.</div>
+        <div class="score-pills">
+          <span class="score-pill on">3 sections coached</span>
+          <span class="score-pill on">avg depth 4.1/5</span>
+          <span class="score-pill">0 AI tells left</span>
         </div>
       </div>
     </div>
   </section>
 
   <!-- QUOTE -->
-  <section class="section reveal">
-    <div class="quote-block">
-      <div class="quote-text">"I wasn't trying to cheat — I just didn't know how to make my own ideas sound as clear as the AI version. Otak helped me put my thinking back in."</div>
-      <div class="quote-attr">Year 2 student · Business Faculty · UiTM</div>
+  <div class="reveal" style="padding-top:20px">
+    <div class="quote">
+      <div class="quote-text">"I wasn't trying to cheat. I just couldn't make my own ideas sound as clear as the AI version. Otak helped me put my thinking back in."</div>
+      <div class="quote-who">Year 2 · Business Faculty · UiTM</div>
     </div>
-  </section>
+  </div>
 
   <!-- FINAL CTA -->
-  <section class="final-section reveal">
-    <div class="final-pre">ready?</div>
-    <h2 class="final-title">Check your essay.<br><em>Right now.</em></h2>
-    <p class="final-sub">Free to try. No account needed. Works on your phone. Takes 2 minutes.</p>
+  <section class="final reveal">
+    <div class="final-kicker">ready?</div>
+    <h2 class="final-title">Your essay.<br><em>Your words.</em><br>Actually.</h2>
+    <p class="final-sub">Free to try. No account needed. Works on your phone. Two minutes.</p>
     <a href="/app/" class="btn-primary" style="display:inline-flex">check my essay free →</a>
-    <div class="final-trust">
-      <div class="trust-item">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#4A6B5A" stroke-width="1.5"/><path d="M5 7l1.5 1.5L9 5" stroke="#4A6B5A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        no sign-up required
-      </div>
-      <div class="trust-item">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#4A6B5A" stroke-width="1.5"/><path d="M5 7l1.5 1.5L9 5" stroke="#4A6B5A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        English &amp; Bahasa Malaysia
-      </div>
-      <div class="trust-item">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#4A6B5A" stroke-width="1.5"/><path d="M5 7l1.5 1.5L9 5" stroke="#4A6B5A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        your ideas, never invented
-      </div>
+    <div class="trust-row">
+      <div class="trust-item"><span class="trust-dot"></span> no sign-up required</div>
+      <div class="trust-item"><span class="trust-dot"></span> English &amp; Bahasa Malaysia</div>
+      <div class="trust-item"><span class="trust-dot"></span> your ideas, never invented</div>
     </div>
   </section>
 
 </div>
 
 <!-- MOBILE STICKY CTA -->
-<div class="mobile-sticky-cta">
+<div class="mob-cta">
   <a href="/app/">check my essay free →</a>
 </div>
 
 <script>
-  // Scroll reveal
-  const reveals = document.querySelectorAll('.reveal')
-  const observer = new IntersectionObserver(entries => {
+  const obs = new IntersectionObserver(entries => {
     entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible')
-        observer.unobserve(e.target)
-      }
+      if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target) }
     })
-  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' })
-  reveals.forEach(el => observer.observe(el))
+  }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' })
 
-  // Stagger pain cards and feature cards
-  document.querySelectorAll('.pain-card, .feature-card').forEach((el, i) => {
-    el.style.transitionDelay = (i * 80) + 'ms'
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    el.style.transitionDelay = (i % 3) * 60 + 'ms'
+    obs.observe(el)
+  })
+
+  // Stagger pain cards
+  document.querySelectorAll('.pain-card, .feat-card').forEach((el, i) => {
+    el.style.transitionDelay = (i * 70) + 'ms'
     el.classList.add('reveal')
-    observer.observe(el)
+    obs.observe(el)
   })
 </script>
 </body>
